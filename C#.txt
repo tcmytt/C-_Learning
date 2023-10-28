@@ -40,3 +40,78 @@ VD: namespace Cau_Truc_Lenh_Co_Ban{
     public delegate void Art();
     namespace Sub_Namespace { }
 }
+- comment
+Ctrl + K + C: đóng comment đoạn code 
+Ctrl + K + U: để mở đoạn comment
+
+3. Nhập xuất cơ bản trong C# Console Application
+- Console.Write();
+Cú pháp: Console.Write(<giá trị cần in ra màn hình>);
+Ý nghĩa: In giá trị ra màn hình console. Giá trị này có thể là 1 ký tự, 1 chuỗi, một giá trị có thể chuyển về kiểu chuỗi
+
+- Console.WriteLine();
+Cú pháp: Console.WriteLine(<giá trị cần in ra màn hình>);
+Ý nghĩa: In giá trị ra màn hình xong nó sẽ tự động đưa con trỏ xuống dòng.
+C1: Console.WriteLine(“K team”)  
+C2: Console.Write (“K team \n”) 
+C3: Environment.NewLine
+
+int a = 5; 
+Console.Write("a =  “ + a); // Kết quả màn hình là: a = 5
+In ra giá trị của biến: Console.Write("{0} {1} {2} {...}", <giá trị 0>, <giá trị 1>, <giá trị 2>, <giá trị n>);
+Console.Write("a = {0}", a); // In ra màn hình giá trị "a = 5".
+
+- Console.Read();
+VD: Console.WriteLine(Console.Read());
+Đọc 1 ký tự từ bàn phím và trả về kiểu số nguyên (sẽ được trình bày chi tiết ở bài KIỂU DỮ LIỆU TRONG C#) là mã ASCII
+Chú ý: lệnh này không đọc được các phím chức năng như Ctrl, Shift, Alt, Caps Lock, Tab, . . .
+
+- Console.ReadLine();
+VD: Console.WriteLine(Console.ReadLine());
+Ý nghĩa: Đọc dữ liệu từ bàn phím cho đến khi gặp ký tự xuống dòng thì dừng (Nói cách khác là đọc cho đến khi mình nhấn enter thì dừng) và giá trị đọc được luôn là một chuỗi.
+
+- Console.ReadKey(<tham số kiểu bool>)
+Lệnh này cũng dùng để đọc một ký tự từ bàn phím nhưng trả về kiểu ConsoleKeyInfo (là một kiểu dữ liệu có cấu trúc được định nghĩa sẵn để chứa những ký tự của bàn phím bao gồm các phím chức năng).
+
+4. Kiểu dữ liệu 
+Kiểu dữ liệu giá trị (value): bool, byte, char, decimal, double, enum, float, int, long, sbyte, short, struct, uint, ulong, ushort.
+Kiểu dữ liệu tham chiếu (reference): object, dynamic, string và tất cả các kiểu dữ liệu do người dùng định nghĩa.
+Giá trị của kiểu char sẽ nằm trong dấu ‘ ’ (nháy đơn).
+Giá trị của kiểu string sẽ nằm trong dấu “ ” (nháy kép).
+Giá trị của biến kiểu float phải có chữ F hoặc f làm hậu tố.
+Giá trị của biến kiểu decimal phải có chữ m hoặc M làm hậu tố.
+Trừ kiểu string, tất cả kiểu dữ liệu trên đều không được có giá trị null
+
+strSoNguyen = Console.ReadLine(); // Đọc dữ liệu nhập vào từ bàn phím (dữ liệu này ở dạng chuỗi) sau đó gán giá trị vào biến strSoNguyen
+SoNguyen = Int32.Parse(strSoNguyen); // Ép kiểu dữ liệu vừa nhập vào (dạng chuỗi) sang dạng số rồi gán giá trị vào biến SoNguyen
+KetQua = (SoNguyen % 2 == 0) ? "so chan" : "so le"; // Sử dụng toán tử 3 ngôi để kiểm tra số chẵn lẻ
+
+5. Hằng trong C#
+const <kiểu dữ liệu> <tên biến> = <giá trị hằng>;
+Kiểu liệt kê(ENUM) là tập hợp các tên hằng có giá trị không thay đổi.
+- (<kiểu dữ liệu>) <biến cần ép kiểu>
+int i = 300; // 300 có mã nhị phân là 100101100
+byte b = (byte)i; 
+double d = 2 / 3; // kết quả ra 0 vì 2 và 3 đều là số nguyên nên thực hiện 2 chia lấy phần nguyên với 3 được 0
+double k = (double)2 / 3; // Ép kiểu số 2 từ kiểu nguyên sang kiểu số thực. Như vậy kết quả phép chia sẽ ra số thực
+double t = 1.0 * 2 / 3; 
+
+- <kiểu dữ liệu>.Parse(<dữ liệu cần chuyển đổi>); Chuyển đổi một chuỗi sang một kiểu dữ liệu cơ bản tương ứng.
+string stringValue = "10";
+int intValue = int.Parse(stringValue); // Chuyển chuỗi stringValue sang kiểu int và lưu giá trị vào biến intValue - Kết quả intValue = 10
+double HowKteam = double.Parse("10.9"); // Chuyển chuỗi giá trị hằng "10.9" sang kiểu int và lưu giá trị vào biến HowKteam - Kết quả HowKteam = 10.9
+
+- <kiểu dữ liệu>.TryParse(<dữ liệu cần chuyển đổi>, out <biến chứa kết quả>); Chuyển một chuỗi sang một kiểu dữ liệu cơ bản tương ứng.
+Phương thức sẽ trả về true nếu chuyển kiểu thành công và giá trị kết quả chuyển kiểu sẽ lưu vào <biến chứa kết quả>. Ngược lại sẽ trả về false và <biến chứa kết quả> sẽ mang giá trị 0.
+bool isSuccess; // Biến kiểm tra việc ép kiểu có thành công hay không
+string Data1 = "10", Data2 = "Kteam"; // Dữ liệu cần ép kiểu
+isSuccess = int.TryParse(Data1, out Result);
+
+-Ngoài TryParse() ra thì vẫn có một cách ép kiểu không báo lỗi chương trình. Đó là sử dụng toán tử as:
+Trong bài TOÁN TỬ TRONG C# chúng ta có giới thiệu toán tử as dùng để “Ép kiểu mà không gây ra lỗi. Nếu ép kiểu không thành công sẽ trả về null”.
+
+- Convert()
+gõ “Convert.” (lưu ý dấu chấm liền sau Convert) Visual Studio sẽ hiển thị ra tất cả các phương thức có trong lớp Convert. 
+Giờ bạn chỉ việc lựa chọn phương thức muốn sử dụng là được.
+VD: String str = Convert.ToBase64String(B); 
+Các trường hợp tham số truyền vào sai định dạng hoặc vượt quá giới hạn thì chương trình sẽ báo lỗi như phương thức Parse().
