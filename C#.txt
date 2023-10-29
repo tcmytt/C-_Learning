@@ -307,3 +307,481 @@ foreach (<kiểu dữ liệu> <tên biến tạm> in <tên mảng hoặc tập 
 
 Trong C#, có những danh sách, tập hợp mà ta không thể truy xuất đến các phần tử của nó thông qua chỉ số phần tử được 
 Trong trường hợp như vậy, để duyệt các danh sách, tập hợp có tính chất như trên thì foreach là lựa chọn tốt nhất.
+
+foreach (int item in IntArray)
+{
+    Console.Write("\t" + item);
+    Sum += item;
+}
+
+14. String
+String là một kiểu dữ liệu tham chiếu được dùng để lưu trữ chuỗi ký tự. 
+Một số phương thức thường dùng trong lớp String:
+String.Compare(strA, strB) ; 0 | 1 | -1
+String.Concat(strA, strB) ; // Nối chuỗi
+String.IsNullOrEmpty(strA) ; 
+
+strA.Substring(3, 1);
+Chuẩn hoá tên :
+for (int i = 0; i < SubName.Length; i++)
+            {
+                SubName[i] = SubName[i].Substring(0, 1).ToUpper() +SubName[i].Substring(1).ToLower();
+                Result += SubName[i] + " ";
+            }
+
+- Lớp StringBuilder trong C# : được .NET xây dựng sẵn giúp chúng ta thao tác trực tiếp với chuỗi gốc và giúp tiết kiệm bộ nhớ hơn so với lớp String.
+Cho phép thao tác trực tiếp trên chuỗi ban đầu.
+Có khả năng tự mở rộng vùng nhớ khi cần thiết.
+Không cho phép lớp khác kế thừa
+
+Khởi tạo một đối tượng rỗng:
+StringBuilder <tên biến> = new StringBuilder();
+Khởi tạo một đối tượng chứa 1 chuỗi cho trước:
+StringBuilder <tên biến> = new StringBuilder(<chuỗi giá trị>);
+
+VD: StringBuilder MutableValue = new StringBuilder("How");
+ MutableValue.Append("Kteam");
+Trong lớp StringBuilder có các phương thức như: Remove, Insert, Replace được sử dụng hoàn toàn giống như lớp String.
+Mới : Append(string value); Clear(); ToString()
+Các bạn nhớ đây là đối tượng kiểu StringBuilder nên thao tác với chuỗi như gán, nối chuỗi, . . . phải thông qua các phương thức chứ không thể thực hiện trực tiếp được.
+
+Thông thường đối với các bài toán đòi hỏi thao tác nhiều với chuỗi gốc như cộng chuỗi, chèn chuỗi, xoá bỏ một số ký tự, . . . thì nên sử dụng StringBuilder để tối ưu bộ nhớ.
+ Còn lại thì nên sử dụng String để việc thao tác thuận tiện hơn.
+
+15. struct
+Struct là một kiểu dữ liệu có cấu trúc, được kết hợp từ các kiểu dữ liệu nguyên thuỷ do người lập trình định nghĩa để thuận tiện trong việc quản lý dữ liệu và lập trình.
+Là một kiểu dữ liệu tham trị , Bên trong struct ngoài các biến có kiểu dữ liệu cơ bản còn có các phương thức, các struct khác.
+Muốn sử dụng phải khởi tạo cấp phát vùng nhớ cho đối tượng thông qua toán tử new. 
+
+struct SinhVien
+{
+public int MaSo;
+public string HoTen;
+public double DiemToan;
+public double DiemLy;
+public double DiemVan;
+
+}
+
+static void NhapThongTinSinhVien(out SinhVien SV)
+        {
+            Console.Write(" Ma so: ");
+            SV.MaSo = int.Parse(Console.ReadLine());
+            Console.Write(" Ho ten: ");
+            SV.HoTen = Console.ReadLine();
+            Console.Write(" Diem toan: ");
+            SV.DiemToan = Double.Parse(Console.ReadLine());
+            Console.Write(" Diem ly: ");
+            SV.DiemLy = Double.Parse(Console.ReadLine());
+            Console.Write(" Diem van: ");
+            SV.DiemVan = Double.Parse(Console.ReadLine());
+        }
+
+16. Enum trong lập trình C#
+Enum là từ khoá dùng để khai báo một kiểu liệt kê (Enumeration). Kiểu liệt kê là một tập hợp các hằng số do người dùng tự định nghĩa.
+Là một kiểu dữ liệu tham trị, Enum không được phép kế thừa
+enum <tên enum>{
+    <danh sách các biểu tượng hằng>
+}
+<tên enum> là tên kiểu liệt kê do mình tự đặt và tuân thủ theo quy tắc đặt tên (đã trình bày trong bài BIẾN TRONG C#).
+<danh sách các biểu tượng hằng> là danh sách các biểu tượng hằng thành phần mỗi biểu tượng hằng cách nhau bằng dấu “,”.
+
+    public const int RED = 0;
+    public const int BLUE = 1;
+    public const int YELLOW = 2;
+Tương đương : Đại diện 0,1,2
+enum Color{
+    RED,
+    BLUE,
+    YELLOW
+}
+Hoặc :
+enum Color{
+    RED = 2,
+    BLUE = 4,
+    YELLOW = 6,
+}
+Nếu ta không quy định giá trị cho các biểu tượng hằng thì giá trị của biểu tượng hằng đầu tiên sẽ mặc định là 0 và tăng dần cho các biểu tượng hằng tiếp theo.
+Ta có thể truy xuất đến từng biểu tượng hằng của enum thông qua toán tử “.” Kèm theo tên biểu tượng hằng muốn truy xuất.
+VD: Color.RED;
+Mặc dù bản chất các biểu tượng hằng là đại diện cho các số nguyên nhưng bạn không thể so sánh trực tiếp chúng với các số nguyên được mà phải ép kiểu
+2 == (int)Color.RED;
+Color Background = (Color)6; // Background sẽ có giá trị là Color.YELLOW
+
+17. Regular Expression trong C#
+Regular Expression hay tiếng Việt được gọi là Biểu thức chính quy, là một cấu trúc rất mạnh để mô tả một chuỗi theo cách thống nhất chung.
+Regular Expression bao gồm tập hợp các ký tự, toán tử hay ký hiệu toán học nhằm biểu thị một chuỗi theo cấu trúc chung mà mọi người học theo. 
+- Dùng phần mềm RegEx tester để học
+
+                    Tổng quan về lập trình hướng đối tượng
+
+18. Tổng quan về lập trình hướng đối tượng
+- là phương pháp lập trình dựa trên kiến trúc lớp (class) và đối tượng (object).
+
+- Đối tượng : đối tượng được hiểu như là 1 thực thể: người, vật hoặc 1 bảng dữ liệu, . . .
+Một đối tượng bao gồm 2 thông tin: thuộc tính và phương thức.
+
+- Lớp : Các đối tượng có các đặc tính tương tự nhau được gom lại thành 1 lớp đối tượng.
+Bên trong lớp cũng có 2 thành phần chính đó là thuộc tính và phương thức.
+Ngoài ra, lớp còn được dùng để định nghĩa ra kiểu dữ liệu mới.
+
+Sự khác nhau giữa đối tượng và lớp :
+- Lớp là một khuôn mẫu còn đối tượng là một thể hiện cụ thể dựa trên khuôn mẫu đó.
+VD: Khi nói đến xe otô thì lớp chính khuôn mẫu của cái xe với các đặc trưng như có 4 bánh , 
+Đối tượng chính là các chiếc xe otô cụ thể như Toyota camry, Honda city, Ford ranger.
+
+Lập trình hướng đối tượng có 4 đặc điểm chính:
+- Tính đóng gói
+- Tính trừu tượng
+- Tính kế thừa
+- Tính đa hình
+
+19. Class trong Lập trình hướng đối tượng
+- Một class trong C# có các thành phần như:
+Thuộc tính: là các thành phần dữ liệu hay còn gọi là các biến.
+Phương thức: là các hàm thành phần thể hiện các hành vi của một đối tượng thuộc lớp.
+Phương thức khởi tạo.
+Phương thức huỷ bỏ.
+
+- Class trong C# thực chất là một kiểu dữ liệu mới do người dùng tự định nghĩa.
+Cú pháp:
+class <tên lớp>{
+     <Phạm vi truy cập> <Các thành phần của lớp>;
+}
+VD :
+class Animal{
+        public double Weight;
+        public double Height;
+        public void Run(){
+            Console.WriteLine(" Animal is running. . .");
+        }
+}
+
+Animal Dog = new Animal();
+Dog.Weight = 2; // gán giá trị cho các thuộc tính của đối tượng
+Dog.Height = 50;
+Animal Cat = new Animal();
+Cat.Weight = 1;
+Cat.Height = 30;
+Dog.Info(); // gọi phương thức của đối tượng
+Cat.Info();
+
+Phương thức khởi tạo : 
+class Cat{
+        public double Weight;
+        public double Height;
+
+        public Cat(){
+            Weight = 800;
+            Height = 10;
+        }
+
+        public Cat(int w, int h){
+            Weight = w;
+            Height = h;
+
+        }
+        public void Info(){
+            Console.WriteLine(" Height: " + Height + " Weight: " + Weight);
+        }
+    }
+
+Cat BlackCat = new Cat();
+Cat WhiteCat = new Cat(1200, 30);
+
+Phương thức huỷ bỏ :
+Có tên trùng với tên lớp nhưng để phân biệt với constructor thì ta thêm dấu “~” vào trước tên lớp.
+Không có kiểu trả về.
+Vì bộ GC của C# có cơ chế tự động phát hiện đối tượng không còn được sử dụng nữa và thực hiện thu hồi vùng nhớ của nó nên bạn không cần phải viết tường minh việc huỷ vùng nhớ của nó. 
+Việc bạn có thể làm viết những thứ bạn muốn làm khi đối tượng bị huỷ vào đây thôi!
+
+20 . Các loại phạm vi truy cập trong Lập trình hướng đối tượng
+- public, private, protected, internal, protected internal .
+Nếu khai báo lớp mà không chỉ ra phạm vi cụ thể thì phạm vi mặc định là internal.
+Nếu khai báo thành phần bên trong lớp mà không chỉ ra phạm vi cụ thể thì phạm vị mặc định là private.
+
+Các thuộc tính thường sẽ có phạm vi là private. 
+Các phương thức thường sẽ có phạm vi là public. 
+
+Phương thức truy vấn, phương thức cập nhật :
+Trong C#, phương thức truy xuất và phương thức cập nhật đã được nâng cấp lên thành 1 cấu trúc mới ngắn gọn hơn và tiện dụng hơn đó là property.
+
+<kiểu dữ liệu> <tên property> {
+            get { return <tên thuộc tính>; }
+            set { <tên thuộc tính> = value; }
+}
+
+<kiểu dữ liệu> là kiểu dữ liệu của property. Thường sẽ trùng với kiểu dữ liệu của thuộc tính private tương ứng bên trong lớp.
+<tên property> là tên do người dùng đặt và tuân theo quy tắc đặt tên đã trình bày trong bài BIẾN TRONG C#.
+get, set, value là từ khoá có ý nghĩa:
+ Từ khoá get tương đương với phương thức truy vấn.
+ Từ khoá set tương đương với phương thức cập nhật.
+ Từ khoá value đại diện cho giá trị mà người gán vào property (tương đương với tham số truyền vào của phương thức cập nhật).
+<tên thuộc tính> là tên thuộc tính thực sự bên trong lớp.
+
+VD : 
+private double diemLy;
+public double DiemLy
+{
+get { return diemLy; }
+set { diemLy = value; }
+}
+
+SinhVien SV1 = new SinhVien();
+SV1.DiemLy = 8; // khi gán giá trị cho property thì các câu lệnh bên trong set sẽ được thực hiện
+Console.WriteLine(" Diem ly: " + SV1.DiemLy); // khi lấy giá trị của property thì các câu lệnh bên trong get sẽ được thực hiện.
+
+Có thể viết thêm điều kiện trong get,set :
+set{
+    if (value <= 10 || value >= 0){
+        diemLy = value;
+    }
+}
+
+21. Từ khóa Static
+Đôi lúc người lập trình mong muốn 1 thuộc tính nào đó được dùng chung cho mọi đối tượng (chỉ được cấp phát 1 vùng nhớ duy nhất). 
+Từ đó khái niệm thành viên tĩnh ra đời.
+- Đặc điểm của thành viên tĩnh:
+Được khởi tạo 1 lần duy nhất ngay khi biên dịch chương trình.
+Có thể dùng chung cho mọi đối tượng.
+Được gọi thông qua tên lớp.
+Được huỷ khi kết thúc chương trình.
+
+- Có 4 loại thành viên tĩnh chính:
+Biến tĩnh (static variable).
+Phương thức tĩnh (static method).
+Lớp tĩnh (static class).
+Phương thức khởi tạo tĩnh (static constructor).
+
+Biến tĩnh :
+public static int Count = 0;
+
+Phương thức tĩnh :
+Hàm tĩnh được sử dụng với 2 mục đích chính:
+Hàm tĩnh là 1 hàm dùng chung của lớp. Được gọi thông qua tên lớp và không cần khởi tạo bất kỳ đối tượng nào, từ đó tránh việc lãng phí bộ nhớ.
+Hỗ trợ trong việc viết các hàm tiện ích để sử dụng lại.
+class TienIch{
+    public static long LuyThua(int CoSo, int SoMu)
+        {
+            long KetQua = 1;
+            for (int i = 0; i < SoMu; i++){
+                KetQua *= CoSo;
+            }
+            return KetQua;
+        }
+    }
+
+Lớp tĩnh :
+Chỉ chứa các thành phần tĩnh (biến tĩnh, phương thức tĩnh).
+Không thể khai báo, khởi tạo 1 đối tượng thuộc lớp tĩnh.
+Với 2 đặc điểm trên có thể thấy lớp tĩnh thường được dùng với mục đích khai báo 1 lớp tiện ích chứa các hàm tiện ích hoặc hằng số vì:
+Ràng buộc các thành phần bên trong lớp phải là static.
+Không cho phép tạo ra các đối tượng dư thừa làm lãng phí bộ nhớ.
+Mọi thứ đều được truy cập thông qua tên lớp.
+Ví dụ điển hình đó là lớp Math.
+
+Phương thức khởi tạo tĩnh :
+Không được phép khai báo phạm vi truy cập. Nếu cố tình làm điều này C# sẽ báo lỗi khi biên dịch.
+Constructor tĩnh sẽ được gọi 1 lần duy nhất khi chương trình được nạp vào bộ nhớ để thực thi như là 1 cách để ta thiết lập một số thông số theo ý muốn trước khi có bất kỳ đối tượng nào được tạo ra.
+Constructor tĩnh cũng giống phương thức tĩnh nên không thể gọi các thuộc tính không phải static.
+static <tên lớp>(){
+    // nội dung của constructor
+}
+
+22. Kế thừa trong Lập trình hướng đối tượng
+Trong lập trình cũng vậy, kế thừa trong lập trình là cách 1 lớp có thể thừa hưởng lại những thuộc tính, phương thức từ 1 lớp khác và sử dụng chúng như là của bản thân mình.
+Cho phép xây dựng 1 lớp mới từ lớp đã có.
+ Lớp mới gọi là lớp con (subclass) hay lớp dẫn xuất (derived class).
+ Lớp đã có gọi là lớp cha (superclass) hay lớp cơ sở (base class).
+Cho phép chia sẽ các thông tin chung nhằm tái sử dụng và đồng thời giúp ta dễ dàng nâng cấp, dễ dàng bảo trì.
+
+class Animal{
+        protected double Weight;
+        protected double Height;
+        protected static int Legs;
+
+        public void Info()
+        {
+            Console.WriteLine(" Weight: " + Weight + " Height: " + Height + " Legs: " + Legs);
+        }
+    }
+
+
+class Cat : Animal
+    {
+        public Cat()
+        {
+            /*
+                Lớp Cat kế thừa lớp Animal
+                mà các thuộc tính Weight, Height, Legs có phạm vi là protected nên được phép kế thừa
+                Từ đó lớp Cat có thể sử dụng mà không cần phải khai báo
+
+             */
+            Weight = 500;
+            Height = 20;
+            Legs = 2;
+        }
+    }
+
+Cat BlackCat = new Cat();
+/* Lớp Cat kế thừa phương thức Info từ lớp Animal nên đối tượng thuộc lớp Cat có thể gọi phương thức Info() */
+BlackCat.Info();
+
+Trong C#, không hỗ trợ đa kế thừa (1 lớp kế thừa từ nhiều lớp) những lại hỗ trợ thực thi nhiều interface (khái niệm về interface sẽ được trình bày trong bài INTERFACE TRONG C#).
+Các thành phần của lớp cha có được kế thừa xuống lớp con hay không là do phạm vi truy cập của thành phần đó là gì.
+Thành phần có phạm vi là private thì không được kế thừa.
+Thành phần có phạm vi là protected, public thì được phép kế thừa.
+Phương thức khởi tạo và phương thức huỷ bỏ không được kế thừa.
+
+Phưong thức khởi tạo : Phương thức khởi tạo mặc định của lớp cha luôn luôn được gọi mỗi khi có 1 đối tượng thuộc lớp con khởi tạo. Và được gọi trước phương thức khởi tạo của lớp con.
+Từ khoá base : dùng trong constructor và base.Tên_Phương_Thức_ClassCha;
+class Animal
+    {
+        public Animal(double w, double h, int l)
+        {
+            Weight = w;
+            Height = h;
+            Legs = l;
+        }
+    }
+
+class Cat : Animal
+    {
+        public Cat()
+        {         
+            Weight = 500;
+            Height = 20;
+            Legs = 2;
+        }
+
+        /*
+            Cách gọi constructor của lớp cha thông qua từ khoá base
+         */
+
+        public Cat(double w, double h, int l) : base(w, h, l)
+        {
+          
+
+        }
+    }
+
+Từ khoá new : 
+Giả sử lớp Animal có phương phức tên Info(). Lớp Cat kế thừa lớp Animal nên cũng sẽ nhận được phương thức này.
+Bây giờ trong lớp Cat ta cũng định nghĩa 1 phương thức tên Info(), có kiểu trả về là void và không có tham số truyền vào.
+C# sẽ gọi phương thức Info() của lớp Cat định nghĩa. Đồng thời cũng đưa ra 1 cảnh báo khi biên dịch.
+Trong C# có hỗ trợ từ khoá new nhằm đánh dấu đây là 1 hàm mới và hàm kế thừa từ lớp cha sẽ bị che đi khiến bên ngoài không thể gọi được.
+Từ khoá này chỉ làm tường minh khai báo của hàm Info() chứ về kết quả khi chạy chương trình sẽ không có thay đổi.
+VD: 
+public new void Info()
+
+{
+
+}
+
+Vậy có cách nào gọi hàm Info() của lớp cha được nữa không?
+Câu trả lời là có nhưng chỉ có thể gọi trong nội bộ của lớp Cat mà thôi.
+/* Từ khoá new chỉ định đây là 1 hàm Info mới của lớp Cat */
+        public new void Info()
+        {
+           Console.WriteLine(" Info of Cat: ");
+           base.Info(); // gọi đến hàm Info() của lớp cha
+        }
+
+
+Vấn đề cấp phát vùng nhớ cho đối tượng :“Một đối tượng thuộc lớp cha có thể tham chiếu đến vùng nhớ của đối tượng thuộc lớp con nhưng ngược lại thì không”.
+Animal cat = new Cat();
+Cat cat = new Animal ();  // Lỗi
+
+23. Đa hình trong Lập trình hướng đối tượng
+Tính đa hình là hiện tượng các đối tượng thuộc các lớp khác nhau có thể hiểu cùng 1 thông điệp theo các cách khác nhau.
+Để thể hiện được tính đa hình:
+Các lớp phải có quan hệ kế thừa với cùng 1 lớp cha nào đó.
+Phương thức đa hình phải được ghi đè (override) ở các lớp con .
+
+Chỉ có thể ghi đè lên phương thức virtual hoặc abstract 
+Virtual là từ khoá dùng để khai báo 1 phương thức ảo (phương thức ảo là phương thức có thể ghi đè được).
+Override là từ khoá dùng để đánh dấu phương thức ghi đè lên phương thức của lớp cha.
+
+Ta cần khai báo phương thức Speak() của lớp cha là phương thức ảo (virtual).
+class Animal
+    {
+        public virtual void Speak()
+        {
+            Console.WriteLine(" Animal is speaking. . .");
+        }
+    }
+
+
+
+    class Cat : Animal
+    {
+        public override void Speak()
+        {
+            Console.WriteLine(" Cat is speaking. . .");
+        }
+    }
+
+
+    class Dog : Animal
+    {
+        public override void Speak()
+        {
+            Console.WriteLine(" Dog is speaking. . .");
+        }
+    }
+
+Lớp trừu tượng và phương thức thuần ảo :
+Phương thức thuần ảo là 1  phương thức ảo và không có định nghĩa bên trong.
+Lớp trừu tượng là lớp chứa phương thức thuần ảo.
+Abstract là từ khoá dùng để khai báo 1 lớp trừu tượng hoặc 1 phương thức thuần ảo.
+
+abstract class Animal
+    {
+        /*
+            Khai báo phương thức thuần ảo nên không cần định nghĩa nội dung cho phương thức
+         */
+
+        public abstract void Speak();
+
+    }
+
+Khi kế thừa 1 lớp trừu tượng bạn bắt buộc phải override tất cả các phương thức thuần ảo nhằm đảm bảo tính hợp lệ cho chương trình.
+
+24. Interface trong Lập trình hướng đối tượng
+là 1 tập các thành phần chỉ có khai báo mà không có phần định nghĩa (giống phương thức thuần ảo)
+
+Đặc điểm của interface :
+Chỉ chứa khai báo không chứa phần định nghĩa (giống phương thức thuần ảo). Mặc dù giống phương thức thuần ảo nhưng bạn không cần phải khai báo từ khoá abstract.
+Việc ghi đè 1 thành phần trong interface cũng không cần từ khoá override.
+Không thể khai báo phạm vi truy cập cho các thành phần bên trong interface. Các thành phần này sẽ mặc định là public.
+Interface không chứa các thuộc tính (các biến) dù là hằng số hay biến tĩnh vẫn không được.
+Interface không có constructor cũng không có destructor.
+Các lớp có thể thực thi nhiều interface cùng lúc (ở 1 góc độ nào đó có thể nó là phương án thay thế đa kế thừa).
+Một interface có thể kế thừa nhiều interface khác nhưng không thể kế thừa bất kỳ lớp nào.
+
+interface ISpeak
+    {
+        /*
+            Khai báo phương thức nhưng không định nghĩa nội dung
+         */
+        void Speak();
+    }
+
+    class Animal : ISpeak // lớp Animal thực thi interface ISpeak
+    {
+        /*
+            Định nghĩa nội dung cho phương thức trong interface
+	Phương thức Speak() phải có phạm vi là public vì phương thức Speak() trong interface mặc định là public rồi.
+         */
+        public void Speak()
+        {
+            Console.WriteLine("Animal is speaking. . ."); 
+        }
+    }
+
+Khác nhau  interface và abstract class :
+interface : Dùng định nghĩa 1 khuôn mẫu, quy tắc chung
+abstract class : Dùng để định nghĩa cốt lõi lớp
+
+Vì việc thực thi interface rất giống với kế thừa nên ta hoàn toàn có thể sử dụng câu lệnh sau:
+ISpeak animal = new Animal();
