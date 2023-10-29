@@ -1,3 +1,5 @@
+C# nền Console Application
+
 1. C# là gì?
 C# là một ngôn ngữ lập trình thuần hướng đối tượng được phát triển bởi Microsoft.
 Được xây dựng dựa trên nền tảng của 2 ngôn ngữ lập trình mạnh nhất đó là C++ và Java. 
@@ -115,3 +117,193 @@ gõ “Convert.” (lưu ý dấu chấm liền sau Convert) Visual Studio sẽ 
 Giờ bạn chỉ việc lựa chọn phương thức muốn sử dụng là được.
 VD: String str = Convert.ToBase64String(B); 
 Các trường hợp tham số truyền vào sai định dạng hoặc vượt quá giới hạn thì chương trình sẽ báo lỗi như phương thức Parse().
+
+6. Kiểu dữ liệu Object trong C#
+- Thuộc kiểu dữ liệu tham chiếu, Mọi kiểu dữ liệu đều được kế thừa từ System.Object
+
+- Boxing là quá trình chuyển dữ liệu từ kiểu dữ liệu giá trị sang kiểu dữ liệu tham chiếu.
+VD:    int Value = 109; 
+    object ObjectValue = Value; 
+
+- Unboxing là quá trình ngược lại với boxing, tức là đưa dữ liệu từ kiểu dữ liệu tham chiếu về kiểu dữ liệu giá trị.
+VD: int NewValue = (int)ObjectValue; 
+
+- Từ khóa var trong C# :  
+Bắt buộc phải gán giá trị ngay khi khởi tạo biến và không thể khởi tạo giá trị null cho biến var.
+var chỉ là từ khóa dùng để khai báo biến không phải là một kiểu dữ liệu.
+VD: 
+var varLong = 109;
+var varString = null; // lỗi
+
+7. Từ khóa Dynamic trong C#
+Khai báo : dynamic <tên biến>;
+Từ khóa dynamic là từ khóa dùng để khai báo kiểu dynamic. Kiểu dynamic là một khái niệm mới được đưa vào trong C# 4.0.
+Các đối tượng thuộc kiểu dynamic sẽ không xác định được kiểu cho đến khi chương trình được thực thi. 
+Tức là trình biên dịch sẽ bỏ qua tất cả lỗi về cú pháp, việc kiểm tra này sẽ thực hiện khi chương trình thực thi.
+Có thể ép kiểu qua lại với các kiểu dữ liệu khác một cách bình thường 
+
+VD1:
+// Khai báo biến StringValue kiểu dynamic và khởi tạo giá trị là một chuỗi kiểu string
+dynamic StringValue = "HowKteam";
+/* 
+* Chúng ta biết rằng kiểu chuỗi không hỗ trợ toán tử ++
+* Nhưng câu lệnh StringValue++ vẫn không báo lỗi là do ở thời điểm hiện tại trình biên dịch vẫn chưa xác định kiểu dữ liệu cho biến StringValue
+* Khi chạy chương trình thì lúc này C# mới phát hiện biến StringValue là kiểu string và không thể thực hiện toán tử ++ lúc đó sẽ xuất hiện lỗi
+*/
+StringValue++;
+
+VD2:
+// Khai báo 2 biến Name và Mission kiểu string và khởi tạo giá trị.
+string Name = "HowKteam ";
+string Mission = "Free Education";
+/* 
+ * Thực hiện gán 1 biến kiểu string cho biến kiểu dynamic bằng cách ép kiểu ngầm định (implicit)
+ * Sau phép gán này thì biến DynamicValue chứa giá trị là "Free Education" nhưng kiểu dữ liệu của nó vẫn chưa được xác định.
+*/
+dynamic DynamicName = Name;
+
+// Thực hiện cộng chuỗi và in ra màn hình bình thường
+Console.WriteLine("Mission of " + DynamicName + " is " + Mission);
+
+
+Phân biệt object, var và dynamic
+- object là kiểu dữ liệu , var và dynamic là từ khoá
+- object và dynamic sử dụng để làm kiểu trả về hoặc tham số cho hàm;
+- object và dynamic có khả năng ép kiểu qua lại với các kiểu dữ liệu khác 
+- var xác định ngay khai báo, dynamic lúc thực thi
+
+8. goto
+Vòng lặp For
+Vòng lặp While
+Vòng lặp Do While
+Vòng lặp Foreach
+
+Vòng lặp goto
+cấu trúc : 
+    label:
+    goto label;
+
+static void Main(string[] args){
+    int a = 1;
+    if (a == 2)
+    {
+        // dịch chuyển tới vị trí label a_Is_2
+        goto a_Is_2;
+    }
+    Console.WriteLine("A == 1");
+    a_Is_2:
+    Console.WriteLine("A == 2");
+    Console.ReadKey();
+}
+ 
+9.Cấu trúc của hàm cơ bản trong C#
+[Từ khóa 1] [Từ khóa 2] [Từ khóa n]  <Kiểu dữ liệu trả về> <Tên hàm>([Parameter]){ }
+- [Từ khóa 1], [Từ khóa 2], [Từ khóa n] là các từ khóa như: public, static, read only … và có thể không điền.
+- Kiểu dữ liệu trả về như: từ khóa void, hay mọi kiểu dữ liệu như int, long, bool, SinhVien…
+- Parameter là tham số truyền vào để sử dụng nội bộ trong hàm. Cấu trúc khởi tạo như một biến bình thường. Có thể không điền.
+- Hàm chỉ được khai báo bên trong class.
+
+10. Biến
+class Program {
+        static int value = 5;
+        static void Main(string[] args)  {
+            Console.WriteLine(value); // 5
+            value = 10;
+            PrintSomeThing();
+            Console.ReadKey();
+        }
+        static void PrintSomeThing() {           
+            Console.WriteLine(value); // 10
+        }
+    }
+
+11. Từ khóa ref và out trong C#
+- Từ khóa ref
+ref hơi giống & trong c++ truyền vào tác dụng thay đổi giá trị gốc khi được gọi hàm
+Từ khóa ref phải có trước tên parametter của hàm và trước tên biến truyền vào khi gọi hàm sử dụng.
+Truyền parameter có từ khóa ref bắt buộc phải là một biến (không thể truyền vào một hằng vì hằng là giá trị không thay đổi).
+Có thể có một hoặc nhiều parameter với từ khóa ref trong lời khai báo hàm.
+Biến truyền vào có từ khóa ref thì phải được khởi tạo giá trị trước khi truyền vào.
+Hàm sử dụng sẽ thao tác trực tiếp với vùng nhớ của các parameter trên RAM. Cho nên kết thúc lời gọi hàm giá trị các parameter sẽ bị thay đổi.
+VD:static void Main(string[] args){
+           int value = 5;
+           Console.WriteLine("Value before increase: {0}", value);
+           IncreaseValue(ref value);
+           Console.WriteLine("Value after increase: {0}", value);
+           Console.ReadKey();
+        }
+        static void IncreaseValue(ref int value){
+            value++;
+        }
+
+- Từ khóa out
+Từ khóa out cũng tương tự từ khóa ref. Đó là:
+Vùng nhớ của các parameter sẽ được hàm sử dụng thao tác trực tiếp, dẫn đến khi kết thúc lời gọi hàm giá trị của các parametter có thể bị thay đổi.
+ Phải có từ khóa out trước tên parameter của hàm và trước tên biến truyền vào khi gọi hàm sử dụng.
+
+Nhưng có một sự khác biệt đó là:
+ Biến truyền vào có từ khóa out sẽ không cần khởi tạo giá trị ban đầu.
+ Parameter đó chỉ như một thùng chứa kết quả trả về khi kết thúc gọi hàm.
+ Đồng thời parameter đó phải được khởi tạo ngay bên trong lời gọi hàm.
+
+ 12. Mảng
+- Mảng 1 chiều :
+ <kiểu dữ liệu>[] <tên mảng> = new <kiểu dữ liệu>[] { <giá trị 1>, …, <giá trị n> };
+ VD:
+ string[] Kteam = new string[3];
+ int[] IntArray = { 3, 9, 10 };
+ string[] Kteam = new string[] { "HowKteam", "Free Education" };
+
+- Mảng 2 chiều :
+<kiểu dữ liệu> [ , ] <tên mảng>;
+VD:
+string[,] Kteam = new string[2, 3]; // số dòng là 2 và số cột là 3.
+int[,] IntArray = 
+{ 
+    {1, 2}, 
+    {3, 4}, 
+    {5, 6} 
+};
+string[,] Kteam = new string[,] 
+{
+{ "HowKteam", "Free Education" },
+{ “HowKteam.com”, “Share to be better” }
+}; 
+
+Phương thức :
+.length(); .Clone();
+
+- Mảng jagged trong C# : 
+Không giống như mảng 2 chiều, mảng jagged không cho phép cấp phát cùng lúc số dòng và số cột 
+mà phải cấp phát số dòng trước sau đó ứng với mỗi dòng ta cấp phát số cột theo ý muốn.
+<kiểu dữ liệu> [ ][ ] <tên mảng>;
+VD:  int [][] JaggedArray = new int[3][];
+     JaggedArray[0] = new int[3];
+     JaggedArray[1] = new int[9];
+     JaggedArray[2] = new int[10];
+
+int[][] JArray ={
+    new int[] {1, 2, 3},
+    new int[] {3, 4, 5, 6, 7, 8, 9}
+};
+Sử dụng <tên mảng>[i][j] thay vì <tên mảng>[i, j].
+
+- Lớp Array trong C# :
+Lớp Array trong C# là lớp cơ sở cho mọi mảng, một mảng bất kỳ đều được kế thừa từ lớp này
+Array.Sort(<tên mảng>)
+Array.Reverse(<tên mảng>)
+Array.IndexOf(<tên mảng>, <phần tử cần tìm>)
+
+13. Vòng lặp foreach trong lập trình C#
+Một số đặc trưng của foreach:
+Foreach không duyệt mảng hoặc tập hợp thông qua chỉ số phần tử như cấu trúc lặp for.
+Foreach duyệt tuần tự các phần tử trong mảng hoặc tập hợp.
+Foreach chỉ dùng để duyệt mảng hoặc tập hợp ngoài ra không thể làm gì khác.
+
+foreach (<kiểu dữ liệu> <tên biến tạm> in <tên mảng hoặc tập hợp>)
+{
+  // Code xử lý        
+}
+
+Trong C#, có những danh sách, tập hợp mà ta không thể truy xuất đến các phần tử của nó thông qua chỉ số phần tử được 
+Trong trường hợp như vậy, để duyệt các danh sách, tập hợp có tính chất như trên thì foreach là lựa chọn tốt nhất.
