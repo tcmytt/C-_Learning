@@ -785,3 +785,364 @@ abstract class : Dùng để định nghĩa cốt lõi lớp
 
 Vì việc thực thi interface rất giống với kế thừa nên ta hoàn toàn có thể sử dụng câu lệnh sau:
 ISpeak animal = new Animal();
+
+
+        hóa học lập trình C# nâng cao
+
+25. Tổng quan về Collection trong C#
+Các lớp hỗ trợ lưu trữ, quản lý và thao tác với các đối tượng một cách có thứ tự.
+Các lớp này nằm trong namespace System.Collections.
+
+Là một mảng có kích thước động:
+Không cần khai báo kích thước khi khởi tạo.
+Có thể tăng giảm số lượng phần tử trong mảng một cách linh hoạt.
+Có thể lưu trữ một tập hợp đối tượng thuộc nhiều kiểu khác nhau.
+
+Một số lớp Collections được sử dụng phổ biến :
+- ArrayList : Lớp cho phép lưu trữ và quản lý các phần tử giống mảng.
+Tuy nhiên, không giống như trong mảng, ta có thể thêm hoặc xoá phần tử một cách linh hoạt
+và có thể tự điều chỉnh kích cỡ một cách tự động.
+
+- HashTable :   Lớp lưu trữ dữ liệu dưới dạng cặp Key – Value.
+Khi đó ta sẽ truy xuất các phần tử trong danh sách này thông qua Key
+(thay vì thông qua chỉ số phần tử như mảng bình thường).
+
+- SortedList : Là sự kêt hợp của ArrayList và HashTable. Tức là dữ liệu sẽ lưu dưới dạng Key – Value.
+ Ta có thể truy xuất các phần tử trong danh sách thông qua Key hoặc thông qua chỉ số phần tử.
+ Đặc biệt là các phần tử trong danh sách này luôn được sắp xếp theo giá trị của Key.
+
+-  Stack : 	Lớp cho phép lưu trữ và thao tác dữ liệu theo cấu trúc LIFO (Last In First Out).
+
+- Queue : Lớp cho phép lưu trữ và thao tác dữ liệu theo cấu trúc FIFO (First In First Out).
+
+- BitArray : Lớp cho phép lưu trữ và quản lý một danh sách các bit.
+  Giống mảng các phần tử kiểu bool với true biểu thị cho bit 1 và false biểu thị cho bit 0.
+  Ngoài ra BitArray còn hỗ trợ một số phương thức cho việc tính toán trên bit.
+
+26. ArrayList trong C#
+using System.Collections;
+
+ArrayList trong C#:
+Là một Collections giúp lưu trữ và quản lý một danh sách các đối tượng theo kiểu mảng (truy cập các phần tử bên trong thông qua chỉ số index).
+Rất giống mảng các object nhưng có thể thêm hoặc xoá các phần tử một cách linh hoạt và có thể tự điều chỉnh kích cỡ một cách tự động.
+
+// khởi tạo 1 ArrayList rỗng
+ArrayList MyArray = new ArrayList(); 
+// khởi tạo 1 ArrayList và chỉ định Capacity ban đầu là 5
+ArrayList MyArray2 = new ArrayList(5); 
+/*
+ * Khởi tạo 1 ArrayList có kích thước bằng với MyArray2.
+ * Sao chép toàn độ phần tử trong MyArray2 vào MyArray3.
+*/
+ArrayList MyArray3 = new ArrayList(MyArray2);
+
+Thuộc Tính : 
+- Count : Trả về 1 số nguyên là số phần tử hiện có trong ArrayList.
+- Capacity :  Trả về 1 số nguyên cho biết số phần tử mà ArrayList có thể chứa (sức chứa).
+
+Phương Thức :
+- Add(object Value) : Thêm đối tượng Value vào cuối ArrayList.
+- AddRange(ICollection ListObject) : Thêm danh sách phần tử ListObject vào cuối ArrayList.
+- BinarySearch(object Value) :Tìm kiếm đối tượng Value trong ArrayList theo thuật toán tìm kiếm nhị phân.
+  Nếu tìm thấy sẽ trả về vị trí của phần tử ngược lại trả về giá trị âm. Lưu ý: là ArrayList phải được sắp xếp trước khi sử dụng hàm.
+- Clear() : Xoá tất cả các phần tử trong ArrayList.
+- Clone() : Tạo 1 bản sao từ ArrayList hiện tại.
+- Contains(object Value) : Kiểm tra đối tượng Value có tồn tại trong ArrayList hay không.
+- GetRange(int StartIndex, int EndIndex) :  Trả về 1 ArrayList bao gồm các phần tử từ vị trí StartIndex đến EndIndex trong ArrayList ban đầu.
+- IndexOf(object Value) : Trả về vị trí đầu tiên xuất hiện đối tượng Value trong ArrayList. Nếu không tìm thấy sẽ trả về -1.
+- Insert(int Index, object Value) : Chèn đối tượng Value vào vị trí Index trong ArrayList.
+- InsertRange(int Index, ICollection ListObject) : Chèn danh sách phần tử ListObject vào vị trí Index trong ArrayList.
+- LastIndexOf(object Value) :  Trả về vị trí xuất hiện cuối cùng của đối tượng Value trong ArrayList. Nếu không tìm thấy sẽ trả về -1.
+- Remove(object Value) : Xoá đối tượng Value xuất hiện đầu tiên trong ArrayList.
+- Reverse() : Đảo ngược tất cả phần tử trong ArrayList.
+- Sort() : Sắp xếp các phần tử trong ArrayList theo thứ tự tăng dần.
+- ToArray() : Trả về 1 mảng các object chứa các phần tử được sao chép từ ArrayList.
+
+Sort ( IComparer comparer) 
+
+Tham số truyền vào là 1 lớp có kế thừa từ interface IComparer .
+Interface IComparer chứa 1 phương thức duy nhất là:
+int Comparer (object x, object y).
+
+Phương thức này sẽ trả về 3 giá trị:
+Bé hơn 0 nếu x < y.
+Lớn hơn 0 nếu x > y.
+Bằng 0 nếu x = y.
+
+- Lớp Người : 
+public class Person
+    {
+        private string name;
+        private int age;
+
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+        public int Age
+        {
+            get { return age; }
+            set { age = value; }
+        }
+
+        public Person(string Name, int Age)
+        {
+            this.Name = Name;
+            this.Age = Age;
+        }
+        public override string ToString()
+        {
+            return "Name: " + name + " | Age: " + age;
+        }
+    }
+
+- Hàm IComparer trong Sort
+ public class SortPersons : IComparer
+    {
+        public int Compare(object x, object y)
+        {
+            // Ép kiểu 2 object truyền vào về Person.
+            Person p1 = x as Person;
+            Person p2 = y as Person;
+
+            /*
+             * Vì có thể 2 object truyền vào không phải Person khi đó ta không thể so sánh được.
+             * Trường hợp này tốt nhất ta nên ném ra lỗi để lập trình viên sửa chữa.
+             * Chi tiết về exception sẽ được trình bày ở những bài học sau.
+             */
+            if (p1 == null || p2 == null)
+            {
+                throw new InvalidOperationException();
+            }
+            else
+            {
+                if (p1.Age > p2.Age)
+                {
+                    return 1;
+                }
+                else if (p1.Age == p2.Age)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+        }
+    }
+
+- Cách Dùng :
+// Tạo 1 danh sách kiểu ArrayList rỗng
+ArrayList arrPersons = new ArrayList();
+
+// Thêm 3 Person vào danh sách
+arrPersons.Add(new Person("Nguyen Van A", 18));
+arrPersons.Add(new Person("Nguyen Van B", 25));
+arrPersons.Add(new Person("Nguyen Van C", 20));
+
+// In thử danh sách Person ban đầu ra.
+Console.WriteLine("Danh sach Person ban dau: ");
+foreach (Person item in arrPersons)
+{
+    Console.WriteLine(item.ToString());
+}
+
+/* 
+ * Thực hiện sắp xếp danh sách Person theo tiêu chí đã được định nghĩa 
+ * trong phương thức Compare của lớp SortPerson (tuổi tăng dần).
+*/
+arrPersons.Sort(new SortPersons());
+
+// In danh sách Person đã được sắp xếp ra màn hình.
+Console.WriteLine();
+Console.WriteLine("Danh sach Person da duoc sap xep theo tuoi tang dan: ");
+foreach (Person item in arrPersons)
+{
+    Console.WriteLine(item.ToString());
+}
+
+27. HashTable trong C# 
+- Là một Collections lưu trữ dữ liệu dưới dạng cặp Key - Value :
+Key đại diện cho 1 khoá giống như chỉ số phần tử của mảng và Value chính là giá trị tương ứng của khoá đó.
+Ta sẽ dử dụng Key để truy cập đến Value tương ứng.
+Vì Key và Value đều là kiểu object nên ta có thể lưu trữ được mọi kiểu dữ liệu từ những kiểu cơ sở đến kiểu phức tạp (class).
+Vì Hashtable là một lớp nên trước khi sử dụng ta cần khởi tạo vùng nhớ bằng toán tử new
+
+using System.Collections;
+
+// khởi tạo 1 Hashtable rỗng
+Hashtable MyHash = new Hashtable(); 
+// khởi tạo 1 Hashtable và chỉ định Capacity ban đầu là 5
+Hashtable MyHash2 = new Hashtable(5); 
+/*
+ * Khởi tạo 1 Hashtable có kích thước bằng với MyHash2.
+ * Sao chép toàn độ phần tử trong MyHash2 vào MyHash3.
+ */
+Hashtable MyHash3 = new Hashtable(MyHash2);
+
+Thuộc tính :
+- Count :  Trả về 1 số nguyên là số phần tử hiện có trong Hashtable.
+- Keys : Trả về 1 danh sách chứa các Key trong Hashtable.
+- Values : Trả về 1 danh sách chứa các Value trong Hashtable.
+
+Phương thức :
+- Add(object Key, object Value) :  Thêm 1 cặp Key - Value vào Hashtable.
+- Clear() : Xoá tất cả các phần tử trong Hashtable.
+- Clone() : Tạo 1 bản sao từ Hashtable hiện tại.
+- ContainsKey(object Key) : Kiểm tra đối tượng Key có tồn tại trong Hashtable hay không.
+- ContainsValue(object Value) : Kiểm tra đối tượng Value có tồn tại trong Hashtable hay không.
+- CopyTo(Array array, int Index) : Thực hiện sao chép tất cả phần tử trong Hashtable sang mảng một chiều array từ vị trí Index của array.
+Lưu ý: array phải là mảng các object hoặc mảng các DictionaryEntry.
+- Remove(object Key) :  Xoá đối tượng có Key xuất hiện đầu tiên trong Hashtable.
+
+Một số lưu ý về Hashtable : 
+Mỗi một phần tử trong Hashtable (bao gồm 1 cặp Key - Value) được C# định nghĩa là 1 đối tượng có kiểu DictionaryEntry. 
+Trong DictionaryEntry có 2 thuộc tính chính:
+Key: trả về giá trị Key của phần tử hiện tại.
+Value: trả về giá trị Value của phần tử hiện tại.
+
+// Tạo một Hashtable đơn giản với 3 phần tử
+            Hashtable hash = new Hashtable();
+            hash.Add("K", "Kteam");
+            hash.Add("H", "HowKteam");
+            hash.Add("FE", "Free Education");
+
+            /* 
+             * Duyệt qua các phần tử trong Hashtable.
+ * Vì mỗi phần tử là 1 DictionaryEntry nên ta chỉ định kiểu dữ liệu cho item là DictionaryEntry luôn.
+             * Thử in ra màn hình cặp Key - Value của mỗi phần tử được duyệt.
+             */
+            foreach (DictionaryEntry item in hash)
+            {
+                Console.WriteLine(item.Key + "\t" + item.Value);   
+            }
+
+Truy xuất các phần tử trong Hashtable
+Console.WriteLine(MyHash["One"]);
+
+Ta nên cẩn thận khi truy xuất các phần tử trong Hashtable thông qua Key:
+Nếu ta thực hiện lấy giá trị 1 phần tử trong Hashtable với Key không tồn tại thì sẽ ra giá trị null và không báo lỗi.
+Nếu ta thực hiện gán giá trị cho 1 phần tử trong Hashtable tại vị trí Key không tồn tại thì Hashtable sẽ tự thêm 1 phần tử mới với Key và Value như trên. 
+Điều này có thể làm phát sinh thêm các phần tử không mong muốn trong danh sách.
+
+28. SortedList trong C# 
+SortedList cũng là một Collections lưu trữ dữ liệu dưới dạng cặp Key - Value. 
+Key đại diện cho 1 khoá giống như chỉ số phần tử của mảng và Value chính là giá trị tương ứng của khoá đó.
+Là 1 Hashtable nhưng các giá trị được sắp xếp theo Key. 
+Việc sắp xếp này được thực hiện một cách tự động mỗi khi thêm 1 phần tử mới vào SortedList.
+Có thể truy xuất đến các phần tử trong SortedListthông qua Key(như Hashtable) hoặc thông qua chỉ số phần tử (như ArrayList).
+SortedList chính là sự kết hợp giữa ArrayList với Hashtable .
+
+using System.Collections;
+
+// khởi tạo 1 SortedList rỗng
+SortedList MySL = new SortedList(); 
+// khởi tạo 1 SortedList và chỉ định Capacity ban đầu là 5
+SortedList MySL2 = new SortedList(5); 
+/*
+ * Khởi tạo 1 SortedList có kích thước bằng với MySL2.
+ * Sao chép toàn độ phần tử trong MySL2 vào MySL3.
+ */
+SortedList MySL3 = new SortedList(MySL2);
+/*
+ * Mình định nghĩa 1 lớp PersonComparer có thực thi 1 interface IComparer
+ * Sau đó override lại phương thức Compare.
+ * Sử dụng lớp trên để truyển vào constructor của SortedList.
+ */
+SortedList MySL4 = new SortedList(new PersonComparer());
+/*
+ * Tạo 1 SortedList mới và sao chép các phần tử từ MySL3 đồng thời sắp xếp các phần tử lại
+ * theo cách sắp xếp được định nghĩa trong lớp PersonComparer.
+ */
+SortedList MySL5 = new SortedList(MySL3, new PersonComparer());
+
+Vì SortedList là sự kết hợp giữa ArrayList và Hashtable nên nó sẽ mang các thuộc tính, phương thức giống 2 Collections trên và một vài phương thức mới.
+Thuộc Tính : Count, Capacity, Keys, Values
+
+Phương Thức :
+- Add(object Key, object Value)
+- Clear(),  Clone(), ContainsKey(object Key), ContainsValue(object Value)
+- CopyTo(Array array, int Index) : Thực hiện sao chép tất cả phần tử trong SortedList sang mảng một chiều array từ vị trí Index của array.
+Lưu ý: array phải là mảng các object hoặc mảng các DictionaryEntry.
+- GetByIndex(int Index) : Trả về giá trị Value tại vị trí Index trong SortedList.
+- GetKey(int Index) : Trả về giá trị Key tại vị trí Index trong SortedList.
+- GetKeyList() :  Trả về 1 List các Key trong SortedList. 
+- GetValueList() : Trả về 1 List các Value trong SortedList.
+- IndexOfKey(object Key) : Trả về 1 số nguyên là chỉ số phần tử của 1 Key trong SortedList.
+- Remove(object Key) : Xoá đối tượng có Key xuất hiện đầu tiên trong SortedList.
+- RemoveAt(int Index) : Xoá đối tượng tại vị trí Index trong SortedList.
+- SetByIndex(int Index, object Value) : Gán giá trị Value mới tại vị trí Index trong SortedList.
+
+Một số lưu ý :
+Nếu bạn muốn các giá trị Key là các đối tượng thuộc 1 lớp nào đó thì bạn phải định nghĩa cách so sánh đối tượng đó. 
+Nếu không chương trình sẽ báo lỗi vì nó không biết phải sắp xếp các Key này như thế nào. 
+// Lỗi do chưa định nghĩa cách so sánh cho Person
+SortedList MySL6 = new SortedList();
+MySL6.Add(new Person("HowKteam", 20), 10);
+MySL6.Add(new Person("Kteam", 2), 15);
+// Để khắc phục điều này ta có thể định nghĩa 1 lớp thực thi interface IComparer và định nghĩa cách sắp xếp trong hàm Comparer(Bên trên)
+// tạo 1 SortedList và truyền vào cách sắp xếp các Key trong SortedList này.
+            SortedList MySL6 = new SortedList(new PersonComparer());
+// Nên override lại cả phương thức toString để việc in ra Key và Value không bị lỗi:
+Ta thử override phương thức ToString trong lớp Person:
+public override string ToString()
+{
+     return Name + " : " + Age;
+}
+
+29. Stack trong C#
+Stack là một Collections đại diện cho một danh sách hoạt động theo nguyên lý LIFO
+
+using System.Collections;
+// khởi tạo 1 Stack rỗng
+Stack MyStack = new Stack();
+// khởi tạo 1 Stack và chỉ định sức chứa ban đầu là 5
+Stack MyStack = new Stack(5); 
+// khởi tạo 1 mảng bất kỳ
+ArrayList MyArray = new ArrayList();
+MyArray.Add(5);
+MyArray.Add(9);
+MyArray.Add(10);
+// Khởi tạo 1 Stack và sao chép giá trị của các phần tử từ MyArray vào Stack.
+Stack MyStack3 = new Stack(MyArray);
+
+Thuộc Tính : 
+- Count : Trả về 1 số nguyên là số phần tử hiện có trong Stack.
+Phương Thức : 
+- Clear(),Clone(),  Contains (object Value), Contains (object Value), CopyTo(Array array, int Index)
+- Peek() : Trả về giá trị của đối tượng tại vị trí trên cùng trong Stack (phần tử thêm vào cuối cùng) nhưng không xoá phần tử khỏi Stack.
+- Pop() :  Trả về giá trị của đối tượng tại vị trí trên cùng trong Stack(phần tử thêm vào cuối cùng) đồng thời xoá phần tử khỏi Stack.
+- Push(object Value) : Thêm một phần tử có giá trị Value vào vị trí trên cùng trong Stack.
+- ToArray() : Tạo ra 1 mảng các object chứa tất cả các phần tử trong Stack và trả về mảng đó.
+
+30. Queue trong C#
+- là một cấu trúc dữ liệu hoạt động theo nguyên lý FIFO (First In First Out). 
+
+using System.Collections;
+
+// khởi tạo 1 Queue rỗng
+Queue MyQueue = new Queue(); 
+// khởi tạo 1 Queue và chỉ định sức chứa ban đầu là 5
+Queue MyQueue2 = new Queue(5); 
+// khởi tạo 1 mảng bất kỳ
+ArrayList MyArray = new ArrayList();
+MyArray.Add(5);
+MyArray.Add(9);
+MyArray.Add(10);
+// Khởi tạo 1 Queue và sao chép giá trị của các phần tử từ MyArray vào Queue.
+Queue MyQueue3 = new Queue(MyArray);
+
+Thuộc Tính : 
+- Count : Trả về 1 số nguyên là số phần tử hiện có trong Queue .
+
+Phương Thức :
+- Clear(), Clone(), Contains (object Value), 
+- CopyTo(Array array, int Index) : Thực hiện sao chép tất cả phần tử trong Queue sang mảng một chiều array từ vị trí Index của array.
+- Enqueue () : Trả về giá trị của đối tượng tại vị trí đầu trong Queue (phần tử thêm vào đầu tiên) nhưng không xoá phần tử khỏi Queue.
+- Dequeue() : Trả về giá trị của đối tượng tại vị trí đầu trong Queue(phần tử thêm vào đầu tiên)đồng thời xoá phần tử khỏi Queue.
+- Push(object Value) :  Thêm một phần tử có giá trị Value vào đầu Queue.
+- ToArray() : Tạo ra 1 mảng các object  chứa tất cả các phần tử trong Queue và trả về mảng đó.
+
