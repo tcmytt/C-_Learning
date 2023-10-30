@@ -1146,3 +1146,220 @@ Phương Thức :
 - Push(object Value) :  Thêm một phần tử có giá trị Value vào đầu Queue.
 - ToArray() : Tạo ra 1 mảng các object  chứa tất cả các phần tử trong Queue và trả về mảng đó.
 
+31. BitArray trong C#
+- BitArray là một Collections giúp quản lý, lưu trữ một danh sách các bit (0 hoặc 1),
+Ta có thể truy cập đến các phần tử trong BitArray thông qua chỉ số như ArrayList.
+Lưu ý: là ta không thể khởi tạo 1 BitArray rỗng!
+
+/*
+ * Khởi tạo 1 BitArray có 10 phần tử. 
+ * Mỗi phần tử có giá trị mặc định 0 (false).
+ */
+BitArray MyBA = new BitArray(10); 
+/*
+ * Khởi tạo 1 BitArray có 10 phần tử. 
+ * Mỗi phần tử có giá trị mặc định 1 (true).
+ */
+BitArray MyBA2 = new BitArray(10, true);
+/*
+ * Khởi tạo 1 BitArray từ một mảng bool có sẵn.
+ */
+bool[] MyBools = new bool[5] { true, false, true, true, false };
+BitArray MyBA3 = new BitArray(MyBools); // 1 0 1 1 0
+
+/*
+ * Khởi tạo 1 BitArray từ một mảng byte có sẵn.
+ * biễu diễn mỗi số bằng 8 bit, vậy mảng bitArray gồm 8*5 phần tử
+ */
+byte[] MyBytes = new byte[5] { 1, 2, 3, 4, 5 };
+BitArray MyBA4 = new BitArray(MyBytes);
+/*
+* Khởi tạo 1 BitArray từ một mảng int có sẵn.
+* biễu diễn mỗi số bằng 32 bit, vậy mảng bitArray gồm 32*5 phần tử
+*/
+int[] MyInts = new int[5] { 1, 2, 3, 4, 5 };
+BitArray MyBA5 = new BitArray(MyInts);
+
+Thuộc Tính : 
+- Count : Trả về 1 số nguyên là số phần tử hiện có trong BitArray. 
+- Length : Trả về 1 số nguyên là số phần tử hiện có trong BitArray. 
+Đồng thời có thể thay đổi kích thước của BitArray bằng cách gán giá trị mới cho thuộc tính này.
+
+Phương Thức : 
+- And(BitArrayValue) :  Thực hiện phép toán AND bit giữa dãy bit hiện tại với dãy bit Value 
+và trả về 1 BitArray là kết quả của phép toán trên.
+
+- Clone() : Tạo 1 bản sao từ BitArray hiện tại.
+- CopyTo(Array array, int Index) : Thực hiện sao chép tất cả phần tử trong BitArray sang mảng một chiều array từ vị trí Index của array.
+- Get(int Index) : Trả về giá trị của bit tại vị trí Index trong BitArray.
+- Not() : Trả về 1 BitArray là kết quả của phép toán NOT trên dãy bit hiện tại.
+- Or(BitArray Value) : Trả về 1 BitArray là kết quả của phép toán OR giữa dãy bit hiện tại với dãy bit Value.
+- Set(int Index, bool Value) : Gán giá trị cho bit tại vị trí Index với giá trị mới là Value.
+- SetAll(bool Value) :  Gán giá trị cho toàn bộ các bit trong BitArray với giá trị mới là Value.
+- Xor(BitArray Value) : Trả về 1 BitArray là kết quả của phép toán XOR giữa dãy bit hiện tại với dãy bit Value.
+
+Lưu ý:
+Các phép toán AND, OR, NOT, XOR phải được thực hiện trên 2 BitArray có cùng độ dài nếu không sẽ báo lỗi.
+Các phép toán AND, OR, NOT, XOR sẽ làm thay đổi cả BitArray gọi nó. 
+Ví dụ:
+BitArray A = new BitArray(5);
+BitArray B = new BitArray(5, true);
+A.And(B);
+Thì kết quả của phép AND sẽ được cập nhật giá trị vào BitArray A.
+
+32. Generic trong C#
+- Giống khái niệm Template (hay còn gọi là mẫu) trong c++ Generic trong C# cho phép bạn định nghĩa một hàm, một lớp mà không cần chỉ ra đối số kiểu dữ liệu là gì. 
+Tuỳ vào kiểu dữ liệu mà người dùng truyền vào thì nó sẽ hoạt động theo kiểu dữ liệu đó.
+
+- Đổi 2 số nguyên : 
+public static void Swap(ref int a, ref int b)
+{
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+- Đổi 2 số bất kì : 
+public static void Swap<T>(ref T a, ref T b)
+{
+    T temp = a;
+    a = b;
+    b = temp;
+}
+
+- Cách Dùng :
+int a = 5, b = 7;
+double c = 1.2, d = 5.6;
+
+Swap<int>(ref a, ref b);
+Swap<double>(ref c, ref d);
+
+- Dùng cho lớp :
+public class MyGeneric<T>
+{
+    private T[] items;
+
+    public T[] Items
+    {
+        get { return items; }
+    }
+
+    public MyGeneric(int Size)
+    {
+        items = new T[Size];
+    }
+
+    public T GetByIndex(int Index)
+    {
+        // Nếu index vượt ra khỏi chỉ số phần tử của mảng thì ném ra ngoại lệ
+        if (Index < 0 || Index >= items.Length)
+        {
+            throw new IndexOutOfRangeException();
+        }
+        else
+        {
+            return items[Index];
+        }
+    }
+
+    public void SetItemValue(int Index, T Value)
+    {
+        if (Index < 0 || Index >= items.Length)
+        {
+            throw new IndexOutOfRangeException();
+        }
+        else
+        {
+            items[Index] = Value;
+        }
+    }
+}
+
+// Khởi tạo 1 mảng số nguyên kiểu int có 5 phần tử
+MyGeneric<int> MyG = new MyGeneric<int>(5);
+MyG.SetItemValue(0, 10);
+
+- Tác dụng của Generic : 
++ Các Collections đều lưu giá trị bên trong là object nên ta khó kiểm soát rằng việc thêm phần tử có phải cùng kiểu dữ liệu ta mong muốn hay không.
++ Muốn quản lý 1 danh sách có cùng kiểu ta dùng Generic Collections.
++ Các Generic Collections đều được xây dựng bắt nguồn từ 1 Collections nào đó có sẵn.Nên mỗi Collections đã học sẽ có một Generic tương ứng.
+
+- Một số Generic Collections được sử dụng phổ biến :
++ List<T> : Thay thế cho ArrayList đã học.
++ Dictionary<Tkey, TValue> : Thay thế cho Hashtable đã học.
++ SortedDictionary<Tkey, TValue> : Thay thế cho SortedList đã học.
++ Stack<T> : Thay thế cho Stack đã học.
++ Queue<T> : Thay thế cho Queue đã học.
+
+33. List trong C#
+- List là 1 Generic Collections đưa ra như một sự thay thế ArrayList vì thế về khái niệm cũng như sử dụng nó hoàn toàn giống với ArrayList.
+
+using System.Collections.Generic;
+
+// khởi tạo 1 List các số nguyên rỗng
+List<int> MyList = new List<int>(); 
+// khởi tạo 1 List các số nguyên và chỉ định Capacity ban đầu là 5
+List<int> MyList2 = new List<int>(5);
+/*
+ * Khởi tạo 1 List số nguyên có kích thước bằng với MyList2.
+ * Sao chép toàn độ phần tử trong MyList2 vào MyList3.
+ */
+List<int> MyList3 = new List<int>(MyList2);
+
+Thuộc Tính, Phương Thức giống ArrayList .
+
+34. Dictionary trong C#
+-  là sự thay thế cho Collections Hashtable .
+
+using System.Collections.Generic;
+
+// khởi tạo 1 Dictionary rỗng với Key và Value đều có kiểu dữ liệu là chuỗi.
+Dictionary<string, string> MyHash = new Dictionary<string, string>(); 
+/* 
+ * khởi tạo 1 Dictionary với Key và Value có kiểu chuỗi 
+ * đồng thời chỉ định Capacity ban đầu là 5
+ */
+Dictionary<string, string> MyDic2 = new Dictionary<string, string>(5);
+ /*
+ * Khởi tạo 1 Dictionary có kích thước bằng với MyDic2.
+ * Sao chép toàn độ phần tử trong MyDic2 vào MyDic3.
+ */
+Dictionary<string, string> MyDic3 = new Dictionary<string, string>(MyDic2);
+
+Thuộc Tính, Phương Thức giống Hashtable .
+
+35 . Tuple trong C#
+Tuple là một kiểu dữ liệu có cấu trúc, giúp lưu trữ các dữ liệu phức tạp mà không cần phải tạo ra một struct hay class mới 
+Tuple là một cấu trúc dữ liệu bất biến (immutable) trong C#, có nghĩa là sau khi bạn gán giá trị cho các phần tử của tuple, bạn không thể thay đổi chúng. 
+Tuy nhiên, bạn có thể tạo một tuple mới với giá trị mới hoặc sử dụng một giá trị khác để thay thế tuple hiện tại.
+C# cung cấp cho chúng ta 8 lớp generic :
+public class Tuple <T1>
+public class Tuple <T1, T2>
+public class Tuple <T1, T2, T3>
+public class Tuple <T1, T2, T3, T4>
+public class Tuple <T1, T2, T3, T4, T5>
+public class Tuple <T1, T2, T3, T4, T5, T6>
+public class Tuple <T1, T2, T3, T4, T5, T6, T7>
+public class Tuple <T1, T2, T3, T4, T5, T6, T7, TRest>
+
+- Dùng Tuple tiện hơn struct hoặc class , Tuple đã override sẵn:
+ Phương thức Equals (phương thức dùng để so sánh 2 đối tượng).
+ Phương thức ToString (Phương thức chuyển giá trị đối tượng sang chuỗi).
+ Phương thức GetHashCode (Phương thức trả về mã băm của một đối tượng, dùng để hỗ trợ so sánh 2 đối tượng).
+
+Khởi tạo một đối tượng Tuplechúng ta có 2 cách:
+- Thông qua phương thức Create trong lớp Tuple:
+// Khởi tạo Tuple thông qua phương thức Create
+var MyTuple = Tuple.Create<int, string>(1, "HowKteam");
+- Thông qua Constructor của các lớp Generic:
+// Khởi tạo Tuple thông qua constructor của các lớp generic
+var MyTuple2 = new Tuple<int, string>(2, "Kteam");
+
+Lấy giá trị :
+// Lấy giá trị bên trong Tuple
+Console.WriteLine(" ID: {0}, Name: {1}",MyTuple.Item1, MyTuple.Item2);
+
+Lưu ý: Các thuộc tính Item1, Item2, Item3,… là các thuộc tính chỉ đọc nghĩa là bạn chỉ có thể gọi ra để lấy giá trị chứ không thể gán giá trị cho chúng được.
+
+36.ICollection trong C#
+- ICollection là một interface trong bộ các interface được định nghĩa sẵn của .NET Framework.
