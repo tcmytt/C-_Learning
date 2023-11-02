@@ -1869,3 +1869,66 @@ int Tong(int x, int y)
     return x + y;
 }
 
+45. Các phương thức mở rộng trong C# C Sharp 
+https://www.youtube.com/watch?v=5gPIMxuF6Yw&list=PLwJr0JSP7i8BERdErX9Ird67xTflZkxb-&index=23
+Kỹ thuật dùng hàm mở rộng để bổ sung các tính năng cho thư viện sẵn có được dùng rất nhiều trong thư viện LINQ - để mở rộng chức năng cho các IEnumerable
+
+Xem ví dụ sau:
+
+using System.Collections.Generic;
+
+namespace CS020_ExtensionMethod
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<int> ls = new List<int>() {1,2,3,4};
+            var ps = ls.Where(i => i >= 3);             // Lỗi vì List không có phương thức Where
+        }
+    }
+}
+Giờ sửa lại code như sau:
+
+using System.Collections.Generic;
+using System.Linq;                                      // Nạp thư viện LINQ
+
+namespace CS020_ExtensionMethod
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<int> ls = new List<int>() {1,2,3,4};
+            var ps = ls.Where(i => i >= 3);             // Linq đã mở rộng thêm vào List phương thức Where
+        }
+    }
+}
+
+
+Khai báo phương thức mở rộng
+Tham số đầu tiên của hàm là kiểu string (lớp mà phương thức mở rộng sẽ thêm vào) cho thêm từ khóa this vào phía trước kiểu này - để cho biết sẽ mở rộng lớp string với phương thức này.
+public static class MyExtensionMethods {
+     public static void Print(this string s, ConsoleColor color = ConsoleColor.Yellow)
+     {
+         ConsoleColor lastColor = Console.ForegroundColor;
+         Console.ForegroundColor = color;
+         Console.WriteLine(s);
+         Console.ForegroundColor = lastColor;
+     }
+}
+
+46.Phương thức tĩnh, dữ liệu chỉ đọc, quá tải toán tử và indexer trong lập trình C# 
+- Phương thức tĩnh ko thuộc lớp dù khai báo trong lớp gọi luôn ko cần dùng new
+VD:
+class A {
+    public static void In(){
+        WriteLine("ssss");
+    }
+}
+
+class B{
+    main{
+        A.In(); // Không cần new A
+    }
+}
