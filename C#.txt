@@ -1363,3 +1363,505 @@ Lưu ý: Các thuộc tính Item1, Item2, Item3,… là các thuộc tính chỉ
 
 36.ICollection trong C#
 - ICollection là một interface trong bộ các interface được định nghĩa sẵn của .NET Framework.
+ICollection đây là 1 interface thể hiện tính chất của 1 collection.
+- Interface ICollection yêu cầu chúng ta thực thi những Property, phương thức sau:
+Count: trả về số lượng phần tử của tập hợp.
+IsSynchronized và SyncRoot: 2 property để làm cho thao tác đa luồng với tập hợp an toàn hơn.
+CopyTo(Array array, int index): phương thức thực hiện copy tập hợp ra 1 mảng, bắt đầu từ vị trí index trong tập hợp.
+GetEnumerator(): Trả về 1 đối tượng kiểu IEnumerator.
+
+public class MyArrayList : ICollection
+    {
+        private object[] lstObj; // mảng giá trị
+        private int count; // số lượng phần tử
+        private const int MAXCOUNT = 100; // số lượng phần tử tối đa
+
+        public MyArrayList()
+        {
+            count = -1;
+            lstObj = new object[MAXCOUNT];
+        }
+
+        public MyArrayList(int count)
+        {
+            this.count = count;
+            lstObj = new object[count];
+        }
+
+        public MyArrayList(Array array)
+        {
+            array.CopyTo(lstObj, 0);
+            count = array.Length;
+        }
+
+        public void CopyTo(Array array, int index)
+        {
+            // thực hiện copy các phần tử trong lstObj từ vị trí index đến cuối sang mảng array.
+            lstObj.CopyTo(array, index);
+        }
+
+        public int Count
+        {
+            get { return count; }
+        }
+
+        public bool IsSynchronized
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public object SyncRoot
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+37. Delegate trong C#
+Delegate trong C# tương tự như con trỏ hàm trong C hoặc C++.
+Delegate là một biến kiểu tham chiếu(references) chứa tham chiếu tới một phương thức.
+Bạn cứ hiểu Delegate là một biến bình thường, biến này chứa hàm mà bạn cần gọi. Sau này lôi ra sài như hàm bình thường.
+
+using System.Delegate;
+
+Khai báo Delegate trong C# sẽ tương tự như khai báo một biến. Nhưng cần thêm từ khóa Delegate để xác định đây là một Delegate. 
+Đồng thời vì Delegate là để tham chiếu đến một hàm, nên cũng cần khai báo kèm kiểu dữ liệu trả về của và tham số đầu vào của Delegate tương ứng với hàm tham chiếu.
+Khai báo :
+delegate <kiểu trả về> <tên delegate> (<danh sách tham số nếu có>);
+
+delegate int MyDelegate(string s);
+Tạo một Delegate có tên là MyDelegate. MyDelegate có kiểu trả về là int, một tham số đầu vào là string.
+
+class Program
+    	{
+        delegate int MyDelegate(string s);
+        static void Main(string[] args)
+        {
+            Console.OutputEncoding = Encoding.Unicode;
+
+            MyDelegate convertToInt = new MyDelegate(ConvertStringToInt);
+
+            string numberSTR = "35";
+
+            int valueConverted = convertToInt(numberSTR);
+
+            Console.WriteLine("Giá trị đã convert thành int: " + valueConverted); 
+
+            Console.ReadLine();
+        }
+
+        static int ConvertStringToInt(string stringValue)
+        {
+            int valueInt = 0;
+
+            Int32.TryParse(stringValue, out valueInt);
+            Console.WriteLine("Đã ép kiểu dữ liệu thành công");
+
+            return valueInt;        
+        }
+    	}
+
+if (showLog != null) showLog("Mgs") hoặc gắn gọn hơn showLog?.Invoke("Mgs");
+
+Vì sao cần Delegate? Khi bạn cần dùng một hàm như một biến ví dụ như tham số truyền vào của một hàm, hàm call-back, event…
+Khi bạn cần thực hiện một chuỗi hàm với cùng kiểu trả về và cùng tham số đầu vào mà không muốn gọi nhiều hàm tuần tự (chỉ gọi 1 hàm 1 lần duy nhất). 
+Bạn sẽ cần dùng đến Multicast Delegate. Bạn có thể làm một chuỗi Delegate cùng kiểu Delegate bằng cách dùng toán tử + ,loại bỏ Delegate trong multicast bằng toán tử -
+class Program
+    	{
+        delegate int MyDelegate(string s);
+        static void Main(string[] args)
+        {
+            Console.OutputEncoding = Encoding.Unicode;
+
+            MyDelegate convertToInt = new MyDelegate(ConvertStringToInt);
+            MyDelegate showString = new MyDelegate(ShowString);
+            MyDelegate multicast = convertToInt + showString;
+            string numberSTR = "35";
+
+            multicast(numberSTR); // Delegate multicast để thực hiện 1 lần 2 Delegate tuần tự là convertToInt và showString.
+
+            Console.ReadLine();
+        }
+
+        static int ConvertStringToInt(string stringValue)
+        {
+            int valueInt = 0;
+            Int32.TryParse(stringValue, out valueInt);
+            Console.WriteLine("Đã ép kiểu dữ liệu thành công");
+            return valueInt;        
+        }
+
+        static int ShowString(string stringValue)
+        {
+            Console.WriteLine(stringValue);
+            return 0;
+        }
+    	}
+
+Khi cần loại bỏ Delegate trong multicast bạn chỉ việc trừ Delegate ra : multicast = multicast - showString;
+
+Dùng Delegate cho call-back function : 
+
+  delegate int MyDelegate(string s);
+        static void Main(string[] args)
+        {
+            Console.OutputEncoding = Encoding.Unicode;           
+
+            MyDelegate showString = new MyDelegate(ShowString);            
+
+            NhapVaShowTen(showString);
+
+            Console.ReadLine();
+        }
+
+        static void NhapVaShowTen(MyDelegate showTen) // 
+        {
+            Console.WriteLine("Mời nhập tên của bạn:");
+            string ten = Console.ReadLine();
+            showTen(ten);
+        }
+
+        static int ShowString(string stringValue)
+        {
+            Console.WriteLine(stringValue);
+            return 0;
+      }
+
+
+
+38 . Event với Delegate trong C#
+Event là Delegate với mục đích để cho lớp khác hoặc đối tượng cha của đối tượng hiện tại ủy thác(định nghĩa) hàm vào trong đó.
+Khai báo Event trong C# sẽ tương tự như khai báo một biến. Nhưng biến này sẽ nhận kiểu dữ liệu là Delegate đã được tạo trước đó. Lưu ý: event phải public.
+
+event <Kiểu delegate> <tên event>;
+event UpdateNameHandler NameChanged;
+
+namespace Event_Voi_Delegate
+{
+    		public delegate void UpdateNameHandler(string name);
+    		class Program
+    		{
+        		static void Main(string[] args)
+        		{
+        		}
+    		}
+
+    		public class HocSinh
+    		{
+        		public event UpdateNameHandler NameChanged;
+
+        		private string _Name;
+        		public string Name
+        		{
+            		get => _Name;
+            		set
+            		{
+                			_Name = value;
+            		}
+        		}
+    		}
+}
+
+Event phải được ủy thác từ đối tượng cha của đối tượng chứa event . 
+Bằng cách += hàm Delegate tương ứng vào event của đối tượng(Tương tự có thể loại bỏ bằng cách -=).
+
+HocSinh hs = new HocSinh();
+hs.NameChanged += Hs_NameChanged;
+
+Hàm Hs_NameChanged lúc này được tự tạo ra bằng cách gõ cú pháp sau :  hs.NameChanged += "  và nhấn phím tab một lần .
+Hàm Hs_NameChanged lúc này được tự tạo ra bên dưới hàm Main với kiểu trả về và tham số đầu vào tương ứng với Delegate UpdateNameHandler.
+
+Hoặc bạn cũng có thể dùng anonymous method trong tình huống này:
+hs.NameChanged += (name) =>
+      {
+            Console.WriteLine("Tên mới: " + name);
+      };
+
+
+code ví dụ mẫu :
+namespace Event_Voi_Delegate
+{
+    public delegate void UpdateNameHandler(string name);
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.OutputEncoding = Encoding.Unicode;
+
+            HocSinh hs = new HocSinh();
+
+            hs.NameChanged += Hs_NameChanged;
+
+            hs.Name = "Kteam";
+            Console.WriteLine("Tên từ class: " + hs.Name);
+            hs.Name = "HowKteam.com";
+            Console.WriteLine("Tên từ class: " + hs.Name);
+
+            Console.ReadLine();
+        }
+
+        private static void Hs_NameChanged(string name)
+        {
+            Console.WriteLine("Tên mới: " + name);
+        }
+    }
+
+    public class HocSinh
+    {
+        public event UpdateNameHandler NameChanged;
+
+        private string _Name;
+        public string Name
+        {
+            get => _Name;
+            set
+            {
+                _Name = value;
+                if(NameChanged != null) // Kiểm tra để không bị null exception.
+                {
+                    NameChanged(Name);
+                }
+            }
+        }
+    }
+}
+
+39 . Event chuẩn .Net trong C#
+Event chuẩn .Net là event với Delegate nhưng thỏa mãn các điều kiện:
+Delegate có kiểu trả về là void
+Delegate có hai tham số, tham số thứ nhất có kiểu dữ liệu là object, tham số thứ hai có kiểu EventArgs. 
+object chính là đối tượng phát sinh sự kiện, EventArgs chính là class giữ thông tin mà đối tượng gửi kèm trong quá trình phát sinh sự kiện.
+Lúc này thay vì chúng ta dùng Delegate do chúng ta tự tạo thì .Net có sẵn Delegate tên là EventHandler theo chuẩn ở trên.
+Vậy các event có sẵn trong .Net như Console.CancelKeyPress hay nhiều event khác nữa
+Các event này thường được đánh ký hiệu là tia sét
+
+public delegate void EventHandler(object sender?, EventArgs e);
+public delegate void EventHandler<TEventArgs>(object sender?, TEventArgs e);
+
+40 . Namespace là gì trong C#
+Một namespace bạn có thể định nghĩa ở nhiều file code (.cs) khác nhau. 
+Khi muốn sử dụng các thành phần của namespace nào đó, thì dùng từ khóa using ở đầu file code để chỉ thị nạp namespace này vào
+
+using mynamespace;
+
+Namespace Systems; là namepace cơ sở hệ thống của .NET, nên hầu như mọi chương trình đều có đoạn code using Systems; ở đầu.
+Các namespace cũng có thể khai báo lồng nhau, nhiều cấp sau đó dùng ký hiệu . để truy cập đến namepace mong muốn, ví dụ namepace B nằm trong namspace A
+namespace A {
+    // Định nghĩa các lớp, cấu trúc ...
+    namespace B {
+        // Định nghĩa các lớp, cấu trúc ...
+    }
+}
+using A.B;
+
+namespace A
+{
+    public struct StructInA {};
+}
+namespace A.B 
+{
+    public struct StructInB {};
+}
+namespace A.B.C
+{
+    public struct StructInC {};
+}
+Cách khai báo này hoàn toàn giống:
+
+namespace A
+{
+    public struct StructInA { };
+
+    namespace B
+    {
+        public struct StructInB { };
+
+        namespace C
+        {
+            public struct StructInC { };
+        }
+    }
+}
+
+Truy cập namespace và từ khóa using :
+Ví dụ, lớp StringBuilder được định nghĩa trong namespace System.Text, vậy để dùng nó trong code bạn phải viết với tên đầy đủ System.Text.StringBuilder:
+System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
+
+Hoặc sử dụng StructInC ở trên bạn phải viết:
+A.B.C.StructInC mystruct;
+Để tránh phải viết tên đầy đủ như vậy bạn sử dụng đến từ khóa using với namespace cần dùng ở đầu. Ví dụ:
+using System.Text;
+//... các thành phần khác
+
+    static void Main (string[] args) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+         // Không cần viết: System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
+    }
+Sử dụng using chỉ thị truy cập trực tiếp các phương thức tĩnh, mà không cần viết tên lớp cú pháp nạp phương thức tĩnh của lớp có dạng using static namespace ... class.
+
+Ví dụ phương thức tĩnh WriteLine trong WriteLine:
+using static System.Console;  // cho biết sử dụng trực tiếp các phương thức tĩnh
+//..
+    WriteLine ("Xin chào C# NET CORE!");
+//..
+
+41 . Partial Type và Nested Type
+Partial là kỹ thuật phân chia code lưu ở nhiều file mã nguồn khác nhau, khi biên dịch thì nó tổng hợp lại thành một. 
+Kỹ thuật này dùng với từ khóa partial khi định nghĩa lớp, giao diện, struct.
+public partial class A { }
+
+Product1.cs
+
+using System;
+namespace CS007B_PARTIAL
+{
+    public partial class Product {
+      public string Name { set; get;}
+
+      public bool Order(int number = 0)
+      {
+        return true;
+      }
+    }
+}
+
+Product2.cs
+
+using System;
+namespace CS007B_PARTIAL
+{
+    public partial class Product {
+
+        public int numberBrought()
+        {
+            return 100;
+        }
+
+    }
+}
+Lưu ý khi dùng partial : Trong định nghĩa ở tất cả các phần phải có từ khóa partial
+
+Lớp lồng nhau (kiểu Nested) trong C#
+Trong C# nó cho phép bạn khai báo một lớp (class), giao diện (interface), cấu trúc (struct) trong thân một lớp khác - chúng được gọi là kiểu lồng nhau (Nested Type)
+public class Container
+{
+    public class Nested
+    {
+        public Nested() { }
+    }
+}
+Lớp Nested được khai báo, định nghĩa trong lớp Container, nếu phạm vị lớp public, thì bên ngoài sử dụng lớp con này bằng cách chỉ rõ Container.Nested
+Container.Nested nested = new Container.Nested();
+
+42. null và null nullable
+null là một giá trị cố định nó biểu thị không có đối tượng nào cả, có nghĩa là biến có giá trị null không có tham chiếu (trỏ) đến đối tượng nào (không có gì).
+null chỉ có thể gán được cho các biến kiểu tham chiếu (biến có kiểu dữ liệu là các lớp), không thể gán null cho những biến có kiểu dữ liệu dạng tham trị như int, float, bool ...
+
+MyClass refvar1, refvar2;
+refvar1 = new MyClass();    // refvar1 tham chiếu (gán) bằng một đối tượng
+refvar2 = refvar1;          // refvar1, refvar2 cùng tham chiếu một đối tượng
+
+refvar1 = null;             // refvar1 gán bằng null =>  không trỏ đến đối tượng nào
+refvar2.ShowData();         // refvar2 có trỏ đến đến tượng, nên có thể truy cập các thành viên của đối tượng
+refvar1.ShowData();         // refvar1 không trỏ đến đối tượng nào, nên truy cập thành viên sẽ lỗi
+
+int myvar = 10;             //  int là kiểu tham trị, nó có thể gán giá trị cho biến myvar (10)
+int myvar = null;           //  lỗi - kiểu tham  trị  không được gán null hay bằng tham chiếu đến đến tượng
+
+Sử dụng nullable trong C#
+Nếu bạn muốn sử dụng các kiểu dữ liệu nguyên tố như int, float, double ... như là một kiểu dữ liệu dạng tham chiếu, có thể gán giá trị null cho nó, có thể sử dụng như đối tượng ... 
+thì khai báo nó có khả năng nullable, khi biến nullable có giá trị thì đọc giá trị bằng truy cập thành viên .Value, cách làm như sau:
+
+int? bienkieuint;                 // Hoặc Nullable<int> bienkieuint;
+bienkieuint = null;               // có thể gán null cho biến
+bienkieuint = 10;                 // có thể gán giá trị cho biến
+
+if (bienkieuint != null)
+{
+    int val = bienkieuint.Value;  // đọc giá trị trong biến nullable
+}
+
+
+43 .Func và Action
+Func và Action là hai mẫu delegate định nghĩa sẵn, giúp bạn nhanh chóng tạo ra biến kiểu delegate mà không mất công khai báo
+Func là mẫu delegate có kiểu trả về. Để khai báo biến delegate dùng cú pháp như sau:
+Func<kiểu_tham_số_1, kiểu_tham_số_2, ..., kiểu_trả_về> var_delegate;
+Kiểu cuối cùng trong khai báo Func là kiểu trả về của hàm, có thể thiếu tham số nhưng không được thiếu kiểu trả về
+Ví dụ muốn có biến delegate tên bien1 tương đương với hàm có 2 tham số, tham số 1 kiểu int, tham số 2 kiểu string, và hàm trả về kiểu bool thì tạo biến đó như sau:
+Func<int, string, bool> bien1;
+Khai báo trên nếu bạn dùng cách thông thường tương ứng với:
+// Khai báo delegate ở lớp
+delegate bool DelegateName(int a, string b);
+// Khai báo biến trong phương thức
+DelegateName bien1;
+
+Action tương tự như Func, điều khác duy nhất là nó không có kiểu trả về, khai báo cơ bản như sau:
+Action<kiểu_tham_số_1, kiểu_tham_số_2, ... > var_delegate;
+Nghĩa là biến kiểu Action có thể gán bằng các hàm có kiểu trả về void
+public static void TestAction(string s)
+{
+    Action<string> showLog = null;
+
+    showLog += Logs.Warning;         // Nối thêm Warning vào delegate
+    showLog += Logs.Info;            // Nối thêm Info vào delegate
+    showLog += Logs.Warning;         // Nối thêm Warning vào delegate
+
+    // Một lần gọi thi hành tất cả các phương thức trong chuỗi delegate
+    showLog("TestLog");
+}
+
+
+44. lambda trong C# 
+Biểu thức lambda còn gọi là biểu thức hàm nặc danh (Anonymous), một biểu thức khai báo giống phương thức (hàm) nhưng thiếu tên. 
+(các_tham_số) =>
+{
+   // các câu lệnh
+    // Sử dụng return nếu có giá trị trả về
+}
+
+(int x, int y) => {
+    return x + y;
+};
+
+Có thể gán biểu thức này cho biến delegate. Ví dụ:  
+using System;
+
+namespace CS09_Anonymous_lambda {
+    class Program {
+        public delegate int TinhToan (int a, int b);
+        static void Main (string[] args) {
+
+            // Gán biểu thức lambda cho delegate
+            TinhToan tinhtong = (int x, int y) => {
+                return x + y;
+            };
+
+            //Gán lambda cho Func
+            Func<int, int, int> tinhtong1 = (int x, int y) => {
+                return x + y;
+            };
+            // Gán lambda cho Action
+            Action<int> thongbao = (int vl) => {
+                Console.WriteLine (vl);
+            };
+
+            int kq = tinhtong (5, 1); // kq = 6;
+            Console.WriteLine(kq);
+        }
+    }
+}
+
+Ví dụ, khai báo phương thức:
+
+int Tong(int x, int y) => x + y;
+Nó tương đương với dạng đầy đủ đã biết
+
+int Tong(int x, int y)
+{
+    return x + y;
+}
