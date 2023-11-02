@@ -4,6 +4,9 @@ C# nền Console Application
 C# là một ngôn ngữ lập trình thuần hướng đối tượng được phát triển bởi Microsoft.
 Được xây dựng dựa trên nền tảng của 2 ngôn ngữ lập trình mạnh nhất đó là C++ và Java. 
 C# với sự hỗ trợ mạnh mẽ của .NET Framework giúp cho việc tạo một ứng dụng Windows Forms hay WPF (Windows Presentation Foundation), . . . trở nên rất dễ dàng.
+dotnet -- version
+dotnet run
+dotnet publish
 
 2.Cấu trúc lệnh cơ bản trong C# Console Application
 
@@ -1865,3 +1868,4 @@ int Tong(int x, int y)
 {
     return x + y;
 }
+
