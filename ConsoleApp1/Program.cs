@@ -1,44 +1,22 @@
 ﻿using System;
+using System.IO;
 
-class Animal
+namespace MyApp // Note: actual namespace depends on the project name.
 {
-
-    public virtual void Speak()
-    {
-        Console.WriteLine(" Animal is speaking. . .");
-    }
-}
-
-
-class Cat : Animal
-{
-    public override void Speak()
-    {
-        Console.WriteLine(" Cat is speaking. . .");
-    }
-}
-
-
-class Dog : Animal
-{
-    public override void Speak()
-    {
-        Console.WriteLine(" Dog is speaking. . .");
-    }
-}
-
-
-
-namespace Cau_Truc_Lenh_Co_Ban
-{
-    class Program
+    internal class Program
     {
         static void Main(string[] args)
         {
-            Animal cat = new Cat();
-            Animal dog = new Dog();
-            cat.Speak();
-            dog.Speak();
+            var ListDrive = DriveInfo.GetDrives();
+            foreach (var i in ListDrive){
+                Console.WriteLine(i.Name);
+                Console.WriteLine(i.DriveType);
+                Console.WriteLine(i.TotalSize);
+                Console.WriteLine(i.AvailableFreeSpace);
+                Console.WriteLine("---------------------------");
+            }
+
+                Console.WriteLine("a");
         }
     }
 }

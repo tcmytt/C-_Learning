@@ -1,5 +1,0 @@
-D:\HocThem\CSharp\ConsoleApp2\bin\Debug\net7.0\publish\ConsoleApp2.exe
-D:\HocThem\CSharp\ConsoleApp2\bin\Debug\net7.0\publish\ConsoleApp2.dll
-D:\HocThem\CSharp\ConsoleApp2\bin\Debug\net7.0\publish\ConsoleApp2.deps.json
-D:\HocThem\CSharp\ConsoleApp2\bin\Debug\net7.0\publish\ConsoleApp2.runtimeconfig.json
-D:\HocThem\CSharp\ConsoleApp2\bin\Debug\net7.0\publish\ConsoleApp2.pdb

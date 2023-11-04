@@ -1,4 +1,4 @@
-C# nền Console Application
+C# nền Console Application, Học từ 2 trang web : HowKteam và XuanThuLab
 
 1. C# là gì?
 C# là một ngôn ngữ lập trình thuần hướng đối tượng được phát triển bởi Microsoft.
@@ -7,6 +7,8 @@ C# với sự hỗ trợ mạnh mẽ của .NET Framework giúp cho việc tạo
 dotnet -- version
 dotnet run
 dotnet publish
+dotnet new console
+dotnet new console --use-program-main
 
 2.Cấu trúc lệnh cơ bản trong C# Console Application
 
@@ -1932,3 +1934,244 @@ class B{
         A.In(); // Không cần new A
     }
 }
+
+Dữ liệu chỉ đọc : readonly
+ - Chỉ được gán lại bởi phương thức khởi tạo
+ class student {
+    public readonly string name;  //public readonly string name = "Khoi tao"
+
+    public student( _name ) {
+        name = _name; 
+    }
+ }
+
+Quá tải toán tử : Viết lại toán tử
+VD Syntax : public static MyVector operator+(MyVector a, MyVector b){//...logic}
+class MyVector {
+    double x;
+    double y;
+    public MyVector(double x, double y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+    public void ShowXY() {
+        Console.WriteLine("x = " + x);
+        Console.WriteLine("y = " + y);
+    }
+    public static MyVector operator+(MyVector a, MyVector b){
+        double sx = a.x + b.x;
+        double sy = a.x + b.y;
+        MyVector v = new MyVector(sx,sy);
+        return v;
+    }
+    public static MyVector operator+(MyVector a, double b){
+        double sx = a.x + b;
+        double sy = a.x + b;
+        MyVector v = new MyVector(sx,sy);
+        return v;
+    }
+
+}
+
+Bộ đánh chỉ mục indexer trong C# :
+public double this [int i] { // Có thể chỉ số là chuỗi public double this [string s]
+    set{
+        switch(i){
+            case 0:
+                x=value;
+            break;
+            case 1 :
+                y = value;
+            break;
+            default :
+                throw new Exception("Chi so sai);
+        }
+    }
+    get {
+        switch(i){
+            case 0:
+                return x;
+            break;
+            case 1 :
+                return y;
+            default :
+                throw new Exception("Chi so sai);
+        }
+    }
+}
+
+47. Ngoại lệ Exception
+- Nếu ngoại lệ (lỗi thực thi) phát sinh mà không xử lý thì chương trình sẽ dừng đột ngột - nếu muốn xử lý ngoại lệ thì ta cần bắt lấy nó và điều hướng chương trình một cách thích hợp.
+try {
+   // Các khối code được giám sát để bắt lỗi nếu có
+   // nếu có lỗi sẽ phát sinh ngoại lệ Exception
+   // Ngoại lệ này bắt lại được ở khối catch
+}
+catch (Exception loi)
+{
+  // Khối này thực thi khi có lỗi - đối tượng Exception bắt được lưu ở biến loi
+}
+catch(Exception e){
+    // Thêm lỗi
+    Console.WriteLine(e.GetType().name) ; // Viết ra tên lỗi Exception
+}
+finally { // Có thể bỏ qua khối này
+    // Luôn được thi hành dù có phát sinh ngoại lệ hay không
+    Console.WriteLine(z);
+}
+
+- Đối tượng lớp Exception có một số thuộc tính, tiện dụng cho bạn gỡ rối đó là:
+Message chuỗi chứa nội dung thông báo lỗi
+StackTrace chuỗi chứa các bước thực thi chương trình cho đến khi bị lỗi (có chứa các phương thức, hàm khi thực thi gây lỗi, vị trí file lỗi ...)
+Source chứa tên ứng dụng hoặc đối tượng bị lỗi
+
+if( ... ){
+    Exception e = new Exception ("tên phải khác rỗng")
+    throw e;
+    // Hoặc throw new Exception("Tuoi phai lon hon 18")
+}
+
+Tạo Exeption riêng :
+Tạo thử một lớp đặt tên là DataTooLongExeption như sau:
+
+using System;
+namespace CS015_Error_Exception
+{
+    public class DataTooLongExeption : Exception
+    {
+        const string erroMessage = "Dữ liệu quá dài";
+        public DataTooLongExeption() : base(erroMessage) {
+        }
+    }
+}
+
+Exception e = new DataTooLongExeption();
+
+48. Chuỗi str trong C# bổ sung
+using System.String
+
+Chuỗi nhập vào viết trong cặp nháy kép "", chèn vào chuỗi các ký tự đặc biệt ta dùng ký hiệu \: ví dụ \\ là ký tự \, \" là ký tự ", \n là ký tự xuống dòng, \r là ký tự về đầu dòng ...
+string s = "C:\\Abc\\xyz";
+// Nếu viết string s = "C:\Abc\xyz"; sẽ lỗi
+
+Nếu muốn viết chuỗi cố định, nội dung nguyên bản - cho biết sẽ không dùng \ để xử lý ký tự đặc biệt, thì thêm @ vào đầu chuỗi:
+string s = @"Ký tự \ được dùng để chèn ký tự đặc biệt như \n, \r";
+string s = @"Anh ấy nói ""Đây là C#"""; //~ Anh ấy nói "Đây là C#";
+Ngoài ra bạn có thể viết chuỗi trên nhiều dòng với ký hiệu @
+string s = @"Xin chào các bạn
+             Tôi đang học C#";
+
+
+Chèn thêm biểu thức vào chuỗi với ký hiệu $ trong C# :
+int a = 10;
+int b = 2;
+string s = $"Kết quả {a}/{b} là {a/b}";  // "Kết quả 10/2 là 5"
+Ký hiệu {i,10} là để ra một khoảng trống 10 ký tự, chèn giá trị i vào khoảng trống đó với căn lề bên phải. 
+Ký hiệu {chanle, -5} là đề ra 5 khoảng trống chèn giá trị và căn lề trái.
+
+49. Làm việc với File
+- Đọc thông tin ổ đĩa - DriveInfo :
+using System.IO;
+Phương thức DriveInfo.GetDrives() trả về mảng gồm các đối tượng DriveInfo, mỗi đối tượng chứa thông tin về một ổ đĩa. 
+DriveInfo Drive = new DriveInfo("C");
+var ListDrive = DriveInfo.GetDrives();
+foreach (var i in ListDrive){
+    Console.WriteLine(i.Name);
+    Console.WriteLine(i.DriveType);
+    Console.WriteLine(i.TotalSize);
+    Console.WriteLine(i.AvailableFreeSpace);
+    Console.WriteLine("---------------------------");
+}
+
+- Làm việc với lớp Directory : Lớp System.IO.Directory cung cấp các phương thức chuyên tương tác với các thư mục.
+using System.IO.Directory;
+Exists(path)	Kiểm tra xem thư mục có tồn tại (true) hay không (false)
+CreateDirectory(path)	Tạo thư mục, trả về đối tượng System.IO.DirectoryInfo chứa thông tin thư mục.
+Delete(path)	Xóa thư mục.
+GetFiles(path)	Lấy các file trong thư mục.
+GetDirectories(path)	Lấy các thư mục trong thư mục.
+Move(src, des)	Di chuyển thư mục.
+
+
+- Lớp Path(Lớp Tĩnh) Hỗ trợ làm việc với đường dẫn : Để hỗ trợ quản lý, tạo các đường dẫn đến file, thư mục - nhất là hỗ trợ cross-platform thì lớp tĩnh System.IO.Path chứa các phương thức (tĩnh) với mục đích đó.
+Path.Phương Thức;
+Path.DirectorySeparatorChar	Thuộc tính chứa ký tự phân cách đường dẫn thư mục (\ trên Windows, / trên *nix)
+Path.PathSeparator	Thuộc tính chứa ký tự phân chia thư mục trong biến môi trường
+Combine	Kết hợp các chuỗi thành dường dẫn
+var path = Path.Combine("home", "ReadMe.txt"); //  "home/ReadMe.txt"
+ChangeExtension	Thay đổi phần mở rộng của đường dẫn
+var path = Path.ChangeExtension("/home/abc/ReadMe.txt", "md"); //  "/home/abc/ReadMe.md"
+GetDirectoryName	Lấy đường dẫn đến file (thư mục)
+var path = Path.GetDirectoryName("/home/abc/zyz/ReadMe.txt"); //  "/home/abc/zyz"
+GetExtension	Lấy phần mở rộng
+var path = Path.GetExtension("/home/ReadMe.txt"); //  ".txt"
+GetFileName	Lấy tên file
+var path = Path.GetFileName("/home/abc/ReadMe.txt"); //  "ReadMe.txt"
+GetFileNameWithoutExtension	Lấy tên file
+var path = Path.GetFileNameWithoutExtension("/home/ReadMe.txt"); //  "ReadMe"
+GetFullPath	Lấy đường dẫn đầy đủ - từ đường dẫn tương đối
+var path = Path.GetFullPath("ReadMe.txt");
+GetPathRoot	Lấy gốc của đường dẫn
+GetRandomFileName	Tạo tên file ngẫu nhiên
+var path = Path.GetRandomFileName();
+GetTempFileName	Tạo file duy nhất, rỗng
+var path = Path.GetTempFileName();
+
+- Lớp file Nó có nhiều phương thức cho những mục đích khác nhau như :
++ File class, như copy, xóa, di chuyển, lưu text vào file, đọc nội dung file, kiểm tra sự tồn tại, tra cứu thông tin về file ...
+using  System.IO.File;
+File.Phương Thức
+
+Tìm hiểu về luồng stream, sử dụng luồng FileStream để đọc ghi file, kỹ thuật đọc ghi copy file text khi sử dụng FileStream trong lập trình C#
+Một luồng (stream) là một đối tượng được sử dụng để truyền dữ liệu. 
+Khi dữ liệu truyền từ các nguồn bên ngoài vào ứng dụng ta gọi đó là đọc stream, và khi dữ liệu truyền từ chương trình ra nguồn bên ngoài ta gọi nó là ghi stream.
+Thư viện .NET cung cấp lớp cơ sở System.IO.Stream để hỗ trợ làm việc đọc ghi các byte dữ liệu với các stream, từ lớp cơ sở này một loạt lớp kế thừa cho những stream đặc thù như: FileStream, BufferStream, MemoryStream ...
+
+Stream stream = new MemoryStream (); // var stream = new MemoryStream ();
+var stream = new FileStream( path:filepath, mode: FileMode.Open, access: FileAccess.ReadWrite, share: FileShare.Read)
+
+using System.IO.Stream;
+
+Lớp FileStream tạo ra các đối tượng để đọc và ghi dữ liệu ra file.  cần đưa nó vào cấu trúc using để tự động gọi giải phóng tài nguyên (Dispose) khi hết khối lệnh.
+string filepath = "/home/data/data.txt";
+using (var stream = new FileStream(path:filepath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read))
+{
+    // code sử dụng stream (System.IO.Stream)
+}
+
+50. Interface IDisposable và từ khóa using
+- Interface IDisposable : System.IDisposable
+Giao diện này chỉ có định nghĩa một phương thức: public void Dispose (); các thao tác để giải phóng các tài nguyên chiếm giữ - khi đối tượng bị hủy
+Các loại tài nguyên đặc biệt : 
+Mở file - stream
+Các kết nối mạng, kết nối đến CSDL ...
+Những vùng bộ nhớ không quản lý được, các font chữ ...
+Bạn cần viết code giải phóng tài nguyên thích hợp ở phương thức hủy (Finalize) và có thể là triển khai giao diện IDisposable để sử dụng với câu lệnh using
+
+Câu lệnh using :
+using (obj_1, obj_2 ... obj_n) {
+    //các câu lệnh trong Using
+}
+obj_1, obj_2 ... là các đối tượng của những lớp triển khai giao diện IDisposabe
+
+Hãy thử ví dụ sau:
+
+Lớp A triển khai giao diện IDisposable
+class A : IDisposable {
+    bool resource = true;
+    public void Dispose() {
+        Console.WriteLine("Phương thức này gọi tự động khi hết using");
+        resource = false; // giải phóng tài nguyên
+    }
+}
+Sử dụng Using với lớp trên
+using (var a = new A()) {
+    Console.WriteLine("Do something ...");
+}
+
+Chạy code trên - kết quả là:
+Do something ...
+Phương thức này gọi tự động khi hết using
+
+51. 
