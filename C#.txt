@@ -2174,4 +2174,21 @@ Chạy code trên - kết quả là:
 Do something ...
 Phương thức này gọi tự động khi hết using
 
-51. 
+51. Lớp ObservableCollection trong C# .net
+Lớp Generic ObservableCollection<T> là một tập hợp tương tự như List<T> ..., tức là nó mô tả một tập hợp dữ liệu có thể thay đổi số lượng bằng các phương thức quen thuộc như Add(), Remove(), Clear() ...
+Các sự kiện event này có tên là CollectionChanged, trong tham số mà sự kiện gửi đến, e.Action có cho biết hành động thay đổi trên tập hợp là gì (ví dụ: thêm NotifyCollectionChangedAction.Add, bớt NotifyCollectionChangedAction.Remove), clear tập hợp NotifyCollectionChangedAction.Reset ...
+
+52. Lập trình bất đồng bộ asynchronous 
+https://xuanthulab.net/lap-trinh-bat-dong-bo-asynchronou-c-c-sharp-voi-bat-dong-bo-theo-mo-hinh-tac-vu.html
+- Hai từ khóa là async và await, đây là hai từ khóa chính để sử dụng trong lập trình bất đồng bộ.
+- Lớp Task :
+
+Task<T> task = new  Task<T>(myfunc);
+Task<T> task = new  Task<T>(myfunc, object);
+Task task = new  Task(myfunc);
+
+task.Start();
+task.wait();
+
+53 .Linq trong lập trình C# .NET
+- LINQ (Language Integrated Query) - ngôn ngữ truy vấn tích hợp - nó tích hợp cú pháp truy vấn (gần giống các câu lệnh SQL) vào bên trong ngôn ngữ lập trình C#, cho nó C# khả năng truy cập các nguồn dữ liệu khác nhau (SQL Db, XML, List ...) với cùng cú pháp.
