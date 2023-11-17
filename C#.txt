@@ -2192,3 +2192,134 @@ task.wait();
 
 53 .Linq trong lập trình C# .NET
 - LINQ (Language Integrated Query) - ngôn ngữ truy vấn tích hợp - nó tích hợp cú pháp truy vấn (gần giống các câu lệnh SQL) vào bên trong ngôn ngữ lập trình C#, cho nó C# khả năng truy cập các nguồn dữ liệu khác nhau (SQL Db, XML, List ...) với cùng cú pháp.
+from ...in ..., select, where, orderby, group ... by, let, join, từ khóa on
+/// Select
+/// SelectMany
+/// Where
+/// Min, Max, Sum, Average
+/// Join
+/// Group Join
+/// Take
+/// Skip
+/// OrderBy OrderByDescending
+/// Reverse
+/// GroupBy
+/// Distinct
+/// Single SingleOrDefault
+/// Any All
+/// Count ()
+
+
+54. Trình quản lý thư viện nuget trên c# (nuget.org)
+- Thư viện được cấu hình, mô tả trong file [TênDựÁn].csproj
+Lệnh thêm package : dotnet add package TênPackage 
+Lệnh gỡ package : dotnet remove package TênPackage 
+Phục hồi, tải package có trong file .csproj : dotnet restore
+using [namespace thư viện]
+
+- Tạo thư viện 
+mkdir Tên_dự_án
+cd Tên_dự_án
+dotnet new classlib
+Mở folder bằng vsc : code . 
+
+- Tham chiếu đến thư viện
+dotnet add [Đường dẫn đến file .csproj cần thêm thư viện] reference [Đường dẫn đến file .csproj thư viện]
+using [namespace thư viện]
+
+dùng dotnet build dự án nếu thư viện thêm phương thức mới sẽ được cập nhập luôn
+
+- Chia sẻ thư viện lên nuget
+Bc1 : tạo tài khoản trên nuget, lấy api Key
+Bc2 : vào dự án nhập : dotnet pack -> tạo file [].nupkg
+Bc3 : dotnet nuget push [].nupkg --api-key [api Key] --source https://api.nuget.org/v3/index.json
+
+55. Lớp Type cách đọc giá trị thuộc tính của một lớp bất kỳ (Tự tạo và có sẵn)
+ob = new ...
+Type t = ob.GetType();
+t có nhiều phương thức giúp tìm hiểu về kiểu : 
+GetMethods() trả về tên các phương public
+GetProperties() trả về tên các thuộc tính pulic của lớp
+GetFields() lấy các trường public
+GetEvents() lấy các sự kiện
+GetProperty(String) lấy đối tượng PropertyInfo biểu thị thuộc tính với tên chỉ ra
+
+VD: t.GetProperties().ToList().ForEach( (p) => Console.WriteLine(p.Name) );
+
+var pros = user.GetType().GetProperties(); // user là đối tượng của 1 lớp tự tạo
+ForEach(var pro in pros){
+    string name = pro.Name;
+    var value = pro.GetValue(user);
+}
+
+56. Attribute Annotation trong lập trình C#
+
+class User {
+    public string Name { get; set; }
+    public int Age {get; set; }
+    public string PhoneNumber {get; set; }
+    public string Email {get; set; } 
+
+    [Obsolete("Phuong thuc nay khong nen su dung nua")]
+    public void PrintInfo() => console.WriteLine(Name);
+}
+
+static void Main(string[] args){
+    // cách tạo ko dùng hàm tạo
+    User user = new User(){
+        Name ="sss",
+        Age=20,
+        ...
+    };
+}
+
+Các Data Annotation/Attribute trong C# định nghĩa trong namespace System.ComponentModel.DataAnnotations, có các loại gồm:
+Required	Dữ liệu phải được thiết lập (!=null)
+[Required (ErrorMessage="{0} cần thiết lập")]
+
+StringLength	Thiết lập độ dài trường dữ liệu
+[StringLength (20,MinimumLength=3, ErrorMessage="Phải dài 3 đến 20 ký tự")]
+
+DataType	Chỉ ra dữ liệu phải liên kết phù hợp với một kiểu nào đó
+[DataType(DataType.Text)]
+[DataType(DataType.PhoneNumber)]
+[DataType(DataType.EmailAddress)]
+/.. Date, DateTime, Html, ImageUrl, MultilineText, Password, Time, Url
+
+Range	Chỉ ra dữ liệu phải trong khoảng nào đó
+[Range(18,99, ErrorMessage="Tuổi từ 18 đến 99")]
+[Range(typeof(DateTime), "1/2/2004", "3/4/2004",
+        ErrorMessage = "Value for {0} must be between {1} and {2}")]
+
+Phone	[Phone] dữ liệu phải là dạng số điện thoại
+
+EmailAddress	[EmailAddress] dữ liệu phải là dạng email
+'
+Để kiểm tra các dữ liệu phù hợp thiết lập bởi Attribute, thì dùng lớp ValidationContext (System.ComponentModel.DataAnnotations), ví dụ:
+public static void checkValidationContext()
+{
+    Employer user    = new Employer();
+    user.Name        = "AF";
+    user.Age         = 6;
+    user.PhoneNumber = "1234as";
+    user.Email       = "test@re";
+
+
+    ValidationContext context       = new ValidationContext(user, null, null);
+    // results - lưu danh sách ValidationResult, kết quả kiểm tra
+    List<ValidationResult> results  = new List<ValidationResult>();
+    // thực hiện kiểm tra dữ liệu
+    bool valid = Validator.TryValidateObject(user, context, results, true);
+
+    if (!valid)
+    {
+        // Duyệt qua các lỗi và in ra
+        foreach (ValidationResult vr in results)
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write($"{vr.MemberNames.First(), 13}");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"    {vr.ErrorMessage}");
+        }
+    }
+}
