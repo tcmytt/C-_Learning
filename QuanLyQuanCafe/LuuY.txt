@@ -1,0 +1,2 @@
+﻿Hạn chế lỗi SQL Injection bằng cách dùng
+Stored Procedure (PROCEDURE)

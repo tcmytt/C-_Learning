@@ -1,0 +1,16 @@
+D:\HocThem\CSharp\QuanLyQuanCafe\bin\Release\net6.0-windows\QuanLyQuanCafe.exe
+D:\HocThem\CSharp\QuanLyQuanCafe\bin\Release\net6.0-windows\QuanLyQuanCafe.deps.json
+D:\HocThem\CSharp\QuanLyQuanCafe\bin\Release\net6.0-windows\QuanLyQuanCafe.runtimeconfig.json
+D:\HocThem\CSharp\QuanLyQuanCafe\bin\Release\net6.0-windows\QuanLyQuanCafe.dll
+D:\HocThem\CSharp\QuanLyQuanCafe\bin\Release\net6.0-windows\QuanLyQuanCafe.pdb
+D:\HocThem\CSharp\QuanLyQuanCafe\obj\Release\net6.0-windows\QuanLyQuanCafe.fLogin.resources
+D:\HocThem\CSharp\QuanLyQuanCafe\obj\Release\net6.0-windows\QuanLyQuanCafe.csproj.GenerateResource.cache
+D:\HocThem\CSharp\QuanLyQuanCafe\obj\Release\net6.0-windows\QuanLyQuanCafe.GeneratedMSBuildEditorConfig.editorconfig
+D:\HocThem\CSharp\QuanLyQuanCafe\obj\Release\net6.0-windows\QuanLyQuanCafe.AssemblyInfoInputs.cache
+D:\HocThem\CSharp\QuanLyQuanCafe\obj\Release\net6.0-windows\QuanLyQuanCafe.AssemblyInfo.cs
+D:\HocThem\CSharp\QuanLyQuanCafe\obj\Release\net6.0-windows\QuanLyQuanCafe.csproj.CoreCompileInputs.cache
+D:\HocThem\CSharp\QuanLyQuanCafe\obj\Release\net6.0-windows\QuanLyQuanCafe.dll
+D:\HocThem\CSharp\QuanLyQuanCafe\obj\Release\net6.0-windows\refint\QuanLyQuanCafe.dll
+D:\HocThem\CSharp\QuanLyQuanCafe\obj\Release\net6.0-windows\QuanLyQuanCafe.pdb
+D:\HocThem\CSharp\QuanLyQuanCafe\obj\Release\net6.0-windows\QuanLyQuanCafe.genruntimeconfig.cache
+D:\HocThem\CSharp\QuanLyQuanCafe\obj\Release\net6.0-windows\ref\QuanLyQuanCafe.dll
