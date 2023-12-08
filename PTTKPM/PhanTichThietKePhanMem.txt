@@ -1,0 +1,68 @@
+1. Một phần mềm chất lượng cần đảm bảo các tiêu chí sau đây:
+- Tính đúng đắn, Tính tiện dụng, Tính hiệu quả, Tính tương thích, Tính tiến hóa, Tính dễ kiểm tra, Tính dễ sửa lỗi, Tính dễ bảo trì, Tính tái sử dụng
+
+2. Quy trình phần mềm :
+- Quy trình thác nước (Waterfall - Linear sequential model) : 
+Phải kết thúc giai đoạn rồi mới qua giai đoạn kế tiếp.
+
+Khảo sát hiện trạng
+Xác định yêu cầu
+Phân tích
+Thiết kế
+Cài đặt
+Kiểm chứng
+Triển khai
+
+Lợi:
+Dễ dàng nắm được toàn bộ thông tin của giai đoạn trước để thực hiện giai đoạn hiện tại.
+Nhanh, gọn.
+Hại:
+Khi có lỗi ở giai đoạn trước đó. Sẽ rất khó để sửa lỗi. Hay phải tốn nhiều chi phí để sửa lỗi.
+
+- Quy trình thác nước cải tiến : 
+Bản chất tương tự như mô hình thác nước. Nhưng có thể quay lại bước trước đó để hoàn thiện hay sửa lỗi rồi mới tiếp tục.
+
+Khảo sát hiện trạng
+Xác định yêu cầu
+Phân tích
+Thiết kế
+Cài đặt
+Kiểm chứng
+Triển khai
+
+Lợi:
+Dễ dàng nắm được toàn bộ thông tin của giai đoạn trước để thực hiện giai đoạn hiện tại.
+Nhanh, gọn, giải quyết vấn đề của thác nước truyền thống là lỗi ớ bước trước thì có thể được quay lại sửa.
+Hại:
+Vẫn còn chưa tối ưu với những hệ thống dài hơi. Cần vừa triển khai vừa nghiên cứu.
+
+- Quy trình Prototype :
+Bản chất tương tự như mô hình thác nước. Nhưng sẽ có một vòng lặp tạo ra sản phẩm mẫu để đánh giá và xác định rõ yêu cầu. 
+Khi đã đảm bảo yêu cầu sẽ bước vào phát triển phần mềm.
+
+Lợi:
+Có sản phẩm mẫu để đánh giá và xác định yêu cầu.
+Phù hợp với những dự án vừa và nhỏ. Vẫn có thể dùng cho dự án lớn nhưng sẽ không tiện lợi bằng quy trình xoắn ốc.
+Nếu sản phẩm mẫu làm tốt có thể giúp tăng tốc độ triển khai sản phẩm chính.
+Hại:
+Vẫn còn chưa tối ưu với những hệ thống dài hơi. Cần vừa triển khai vừa nghiên cứu.
+Tốn chi phí tạo sản phẩm mẫu.
+
+- Quy trình xoắn ốc :
+Bản chất tương tự như mô hình Prototype. Nhưng sẽ là nhiều lần tạo ra các Prototype và sản phẩm. Mỗi lần như vậy sẽ được đánh giá hoàn thiện hay không. 
+Và tiếp tục dựa trên sản phẩm đã hoàn thiện để thực hiện Prototype sau. Đến khi toàn bộ yêu cầu được hoàn thành. Hoặc có yêu cầu mới.
+
+Lợi:
+Có sản phẩm mẫu để đánh giá và xác định yêu cầu. Có thể triển khai với hệ thống lớn và những dự án chưa có yêu cầu rõ ràng.
+Nếu sản phẩm mẫu làm tốt có thể giúp tăng tốc độ triển khai sản phẩm chính.
+Hại:
+Vẫn còn chưa tối ưu với những hệ thống dài hơi. Cần vừa triển khai vừa nghiên cứu.
+Tốn chi phí tạo sản phẩm mẫu.
+Không phù hợp với dự án nhỏ.
+
+3. Tạo lược đồ Use - Case trong PTTKPM
+- Actor (Tác nhân ngoài) : Người dùng(Hoặc nhóm người dùng), Thiết bị ngoại vi, Phần mềm khác.
+Một hay nhiều Actor tùy vào ngữ cảnh: Với trường hợp nhân viên dùng phần mềm thì có thể có nhiều nhân viên. 
+Nhưng vẫn gọi chung Actor đó là Nhân Viên. Máy quét mã vạch thì chỉ có một tương tác với phần mềm.
+
+- Use – Case : 1 Use – Case là 1 chức năng của hệ thống
