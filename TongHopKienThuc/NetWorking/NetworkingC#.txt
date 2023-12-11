@@ -1,0 +1,168 @@
+1 . Lớp Uri Dns Ping và các lớp về Networking trong lập trình C# NET Core
+- Một số namespace, class về Networking :
+Namespace:
+System.Net
+System.Net.Mail
+System.Net.NetworkInformation
+System.Net.Http
+
+Làm việc với máy chủ Dns, Uri, địa chỉ mạng có các lớp Dns, Uri, Cookie, IPAddress ...
+Làm việc với FTP Server có các lớp FtpStatusCode, FtpWebRequest, FtpWebResponse ...
+Làm việc với giao thức HTTP (máy chủ web) có các lớp như: HttpStatusCode, HttpWebRequest, HttpWebResponse, HttpClient, HttpMethod, HttpRequestMessage, HttpResponseMessage
+Làm việc với máy chủ SMTP gửi email: SmtpClient, MailMessage, MailAddress, MailAddress
+Làm việc với giao thức mạng: IPStatus, NetworkChange, Ping, TcpStatistics ...
+
+- Lớp Uri (Uniform Resource Identifier) (Hai loại là URL và URN)  : lấy thông tin các thành phần của URL như host, path, query ... 
+URI (Uniform Resource Identifier) là một chuỗi ký tự để định vị tài nguyên (tài nguyên đó ở đâu, là gì trên internet). 
+
+string url = "https://xuanthulab.net/lap-trinh/csharp/?page=3#acff";
+var uri = new Uri(url);
+var uritype = typeof(Uri);
+uritype.GetProperties().ToList().ForEach(property => {
+    Console.WriteLine($"{property.Name, 15} {property.GetValue(uri)}");
+});
+Console.WriteLine($"Segments: {string.Join(",", uri.Segments)}");
+
+- Lớp tĩnh Dns và lớp IPHostEntry :  
+Lấy thông tin về host (địa chỉ website, server cung cấp các dịch vụ mạng) từ hệ thống phân giải tên miền (Dns) trả về một đối tượng giao diện IPHostEntry
+
+string url = "https://www.bootstrapcdn.com/";
+var uri = new Uri(url);
+var hostEntry = Dns.GetHostEntry(uri.Host);
+Console.WriteLine($"Host {uri.Host} có các IP");
+hostEntry.AddressList.ToList().ForEach(ip => Console.WriteLine(ip));
+
+- Lớp Ping : xác định một máy từ xa (như server, máy trong mạng ...) có phản hồi không.
+var ping = new Ping();
+var pingReply = ping.Send("google.com.vn");
+Console.WriteLine(pingReply.Status); // Success
+if (pingReply.Status == IPStatus.Success)
+{
+    Console.WriteLine(pingReply.RoundtripTime); // 322
+    Console.WriteLine(pingReply.Address);      // 172.217.24.195
+}
+
+2. Sử dụng HttpClient trong C# tạo các truy vấn HTTP
+Lớp HttpClient được sử dụng để gửi truy vấn HTTP (Http Request Message - Request) và nhận phản hồi Response (Http Response Message) từ các truy vấn đó. 
+Lớp này thuộc namespace System.Net.Http, namespace này chứa các lớp giúp tạo ra sự liên lạc giữa client và server. 
+
+- Để làm việc với HttpClient dùng những namespace sau:
+using System;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
+using System.IO;
+using System.Text;
+
+- Tạo truy vấn GET bất đồng bộ với HttpClient :
+// Khởi tạo http client
+using var httpClient = new HttpClient();
+// Thiết lập các Header nếu cần
+httpClient.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml+json");
+// Thực hiện truy vấn GET
+HttpResponseMessage response = await httpClient.GetAsync(url);
+
+- Một số phương thức, thuộc tính lớp HttpResponseMessage :
+EnsureSuccessStatusCode() : Phát sinh Exception nếu truy vấn có mã trả về không thành công (khi thuộc tính IsSuccessStatusCode là false) ;
+IsSuccessStatusCode() :	Nhận true khi mã trả về thành công, ví dụ mã trạng thái StatusCode nhận giá trị 200 ;
+StatusCode : Thuộc tính có kiểu enum HttpStatusCode cho biết mã trạng thái của kết quả (Như 301 - MovedPermanently, 200 - OK, 404 - NotFound ...), để chuyển sang số nguyên (int)HttpStatusCode
+ReasonPhrase : Đoạn text, mô tả thông tin cho mã trạng thái như OK, MovedPermanently ...
+Headers chứa tập hợp các header .
+Content : ReadAsStringAsync , ReadAsStreamAsync , ReadAsByteArrayAsync.
+
+string url = "https://www.google.com/search?q=xuanthulab";
+using var httpClient = new HttpClient();
+httpClient.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml+json");
+HttpResponseMessage response = await httpClient.GetAsync(url);
+string htmltext = await response.Content.ReadAsStringAsync();
+Console.WriteLine(htmltext);
+
+- ReadAsStreamAsync và ReadAsByteArrayAsync đọc nội dung
+DownloadDataStream trả về một Stream để đọc Content
+
+- Tạo request với SendAsync :
+var httpRequestMessage = new HttpRequestMessage();
+httpRequestMessage.Method = HttpMethod.Post;
+httpRequestMessage.RequestUri = new Uri("https://xuanthulab.net");
+/...có thể thiết lập nhiều thông tin như, thiết lập method với thuộc tính Method (giá trị GET, POST, DELETE ...), 
+thiết lập địa chỉ truy vấn với thuộc tính RequestUri, thiết lập Content của truy vấn với Content ...
+var response = await httpClient.SendAsync(request);
+
+- Sử dụng FormUrlEncodedContent :
+Với FormUrlEncodedContent bạn có thể tạo Content tương ứng như một Form HTML, nó chứa các giá trị (key/value) sẽ Post đến Server. 
+
+- Sử dụng StringContent
+Có thể gán Content bằng đối tượng kiểu StringContent chứa chuỗi nội dung (sử dụng cách này để tạo truy vấn Webservice API với Content là JSON)
+
+- Sử dụng MultipartFormDataContent
+Bạn có thể gán Content bằng đối tượng kiểu MultipartFormDataContent, để post dữ liệu nhiều thành phần (multipart/form-data), vừa có dữ liệu như các phần tử của HTML Form vừa có thể kèm file.
+
+3. Sử dụng HttpMessageHandler cho HttpClient trong C# CSharp
+Tìm hiểu về handler trong HttpClient, sử dụng các handler HttpClientHandler, SocketsHttpHandler để tùy biến request, lưu và gửi Cookie với CookieContainer. 
+Dùng DelegatingHandler tạo Pipeline, nhiều handler cho HttpClient
+
+- Lớp HttpMessageHandler :
+Một số thuộc tính trong HttpClientHandler : 
+AllowAutoRedirect : 	Thuộc tính, mặc định là true, để thiết lập tự động chuyển hướng. Ví dụ truy vấn đến URI có chuyển hướng đến đích mới (301) thì - HttpClient sẽ tự động chuyển hướng truy vấn đến đó.
+AutomaticDecompression : 	Thuộc tính thuộc tính để handler tự động giải nén / nén nội dung HTTP
+UseCookies : Mặc định là true: cho phép sử dụng thuộc tính CookieContainer để lưu các Cookie của server khi respone trả về, cũng như tự động gửi Cookie khi gửi truy vấn,
+CookieContainer : 	Thuộc tính thuộc lớp CookieContainer, nó lưu các cookie.
+
+- Sử dụng SocketsHttpHandler cho HttpClient :
+Lớp handler SocketsHttpHandler sử dụng giống hệt HttpClientHandler nó được thiết kế để sử dụng tốt hơn - nhanh hơn trên .NET Core, nó độc lập thiết bị tốt hơn (chạy tốt trên macOS, Linux).
+
+- Sử dụng DelegatingHandler cho HttpClient :
+
+
+4. Sử dụng lớp HttpListener trong C# để tạo máy chủ web - HTTP đơn giản
+Tạo ra máy chủ HTTP đơn giản với HttpListener, máy chủ nhận các yêu cẩu gửi đến và trả về nội dung HTTP theo nhu cầu, cách viết nội dung vào Response cũng như đọc thông tin Request
+Thông thường để có đầy đủ các tính năng khi triển khai ứng dụng chúng ta có thể sử dụng dịch vụ HTTP hoàn chỉnh như IIS, Apache HTTPD, Nginx hay Kestrel.
+
+- Lớp HttpListener :
+Lớp HttpListener giúp tạo ra dịch vụ với giao thức HTTP, nó lắng nghe các yêu cầu HTTP Request gửi đến và trả về HTTP Respone. 
+
+Một số phương thức thuộc tính của lớp HttpListener :
++ IsSupported : Phương thức tĩnh kiểu bool, cho biết máy có hỗ trợ HttpListener hay không
+
++ Prefixes : Thuộc tính, nó chứa các chuỗi cấu trúc URI mà HttpListener làm việc.
+HttpListener listener = new HttpListener();
+listener.Prefixes.Add("http://*:8080/");
+listener.Prefixes.Add("https://*/");
+
++ Start()	Bắt đầu cho phép nhận các yêu cầu (HTTP Request) gửi đến.
+
++ Stop()	Dừng dịch vụ
+
++ GetContextAsync()	: Chờ kết tạo một kết nối client gửi đến và thực hiện bất đồng bộ nhận thông tin gửi đến bởi client nếu có. 
+HttpListenerContext   context  = await listener.GetContextAsync();
+HttpListenerRequest   request  = context.Request; // chứa thông tin gửi đến
+HttpListenerResponse  response = context.Response;// các nội dung trả về thiết lập vào respone
+
+5. Giao thức Tcp với các lớp TcpListener TcpClient và các lớp Uri IPAddress C# C Sharp
+TcpClient tạo truy vấn HTTP, TcpListener tạo dịch vụ trên server lắng nghe kết nối TCP, ví dụ Client/Server bằng TcpListener/TcpClient tương tác với nhau và các lớp tiện ích Uri, Dns
+- Lớp Uri và UriBuilder :
+Cấu trúc Uri
+http://site.yourdomain.com/path/to/page/?a=1&b=price#section
+Ngược lại, bạn có thể từ các thành phần của Uri như Path, Host, Port ... dùng lớp UriBuilder để có được Uri
+
+- Lớp IPAddress :
+Lớp IPAddress biểu diễn một địa chỉ IP. Thực chất địa chỉ IP là một mảng byte, có thể lấy mảng byte này bằng GetAddressBytes, tuy nhiên có thể chuyển thành biểu diễn mảng byte đó thành chuỗi các số thập phân, phân cách nhau bởi ký tự . bằng phương thức ToString().
+Bạn có thể khởi tạo đối tượng IPAdress bằng cách cung cấp mảng byte biểu diễn IP, hoặc phân tích từ một string biểu diễn IP bằng IPAddress.TryParse
+
+IPAddress.Broadcast	Địa chỉ broadcast của mạng, đây là IP đặc biệt của mạng, gửi gói tin tới IP này nghĩa là gửi tới tất cả các máy trong mạng
+IPAddress.Loopback	Địa chỉ Loopback, không đia qua thiết bị mạng, biểu diễn hostname tên localhost, trỏ đến chính máy host
+MapToIPv4()	Convert thành IP4
+MapToIPv6()	Convert thành IP6
+
+- Lớp IPHostEntry :
+Lớp IPHostEntry biểu diễn địa chỉ mạng host, nó gắn với một DSN.
+
+- Lớp Dns :
+
+
+
+
+https://xuanthulab.net/networking-giao-thuc-tcp-voi-cac-lop-tcplistener-tcpclient-va-cac-lop-uri-ipaddress-c-c-sharp.html

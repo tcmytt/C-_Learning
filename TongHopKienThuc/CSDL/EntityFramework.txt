@@ -1,0 +1,407 @@
+1. Giới thiệu Entity Framework và cách sử dụng phần cơ bản với C# CSharp
+Thư viện cung cấp khả năng ánh xạ đối tượng lập trình với các đối tượng CSDL, cơ bản dùng EF để tạo DB, đọc, ghi, xóa dữ liệu, sử dụng Linq để thực hiện các truy vấn.
+
+Để sử dụng EF Core hãy thêm những package cần thiết vào, chạy các lệnh sau:
+dotnet add package System.Data.SqlClient
+dotnet add package Microsoft.EntityFrameworkCore
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.Extensions.DependencyInjection
+dotnet add package Microsoft.Extensions.Logging
+dotnet add package Microsoft.Extensions.Logging.Console
+
+Những namespace có thể dùng:
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
+
+- Tạo Model đơn giản, ánh xạ bảng CSDL :
+Model là mô hình hóa các đối tượng dữ liệu trong hệ quản trị CSDL thành các đối tượng lập trình, đó là các lớp (class) tương ứng với các bảng ...
+VD tạo ra một model đơn giản, lớp có tên Product biểu diễn các dòng trong bảng của CDSL, bảng này tên là Products
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+namespace ef01
+{
+    public class Product
+    {
+        public int ProductId {set; get;}
+        public string Name {set; get;}
+        public string Provider {set; get;}
+    }
+}
+
+Trước khi sử dụng model Product trong EF Core, hãy bổ sung các thiết lập thông qua các Attribute (sử dụng Sử dụng Attribute) như sau:
+Thiết lập lớp Product là ánh xạ bảng Products, dùng thuộc tính Table để thiết lập: [Table("Products")]
+Trường ProductId là Primary key của bảng với thuộc tính [Key]
+Trường Name bắt buộc phải thiết lập (khác null) dùng thuộc tính [Required], và độ dài tối là là 50 ký tự với thuộc tính [StringLength(50)]
+
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+namespace ef01
+{
+    [Table("Products")]
+    public class Product
+    {
+        [Key]
+        public int ProductId {set; get;}
+
+        [Required]
+        [StringLength(50)]
+        public string Name {set; get;}
+
+        [StringLength(50)]
+        public string Provider {set; get;}
+    }
+}
+Đây là khai báo một lớp bình thường, chỉ có bổ sung thêm vài thuộc tính mô tả (Attribute) cho lớp, thuộc tính - các Attribute này được sử dụng bởi EF.
+
+- Tạo Context - DbContext
+Lớp này mang ý nghĩa như là một CSDL.
+using Microsoft.EntityFrameworkCore;
+
+namespace ef01
+{
+    public class ProductsContext : DbContext
+    {
+        // Thuộc tính products kiểu DbSet<Product> cho biết CSDL có bảng mà
+        // thông tin về bảng dữ liệu biểu diễn bởi model Product
+        public DbSet<Product> products {set; get;}
+
+        // Chuỗi kết nối tới CSDL (MS SQL Server)
+        private const string connectionString = @"
+                Data Source=localhost,1433;
+                Initial Catalog=mydata;
+                User ID=SA;Password=Password123";
+
+        // Phương thức OnConfiguring gọi mỗi khi một đối tượng DbContext được tạo
+        // Nạp chồng nó để thiết lập các cấu hình, như thiết lập chuỗi kết nối
+        protected override void  OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseSqlServer(connectionString);
+        }s
+    }
+}
+
+Từ lớp kế thừa DbContext là ProductsContext có thể tương tác với CSDL bằng cách gọi các phương thức thích hợp trong DbContext 
++ Tạo và xóa Database :
+// Tạo Database mydata (tên mydata từ thông tin kết nối)
+// Gồm tất cả các bảng định nghĩa bởi các thuộc tính kiểu DbSet
+public static async Task CreateDatabase() {
+    using (var dbcontext = new ProductsContext())
+    {
+        bool result = await dbcontext.Database.EnsureCreatedAsync();
+        string resultstring = result ? "tạo  thành  công" : "đã có trước đó";
+        Console.WriteLine($"CSDL {databasename} : {resultstring}");
+    }
+}
+
+public static async Task DeleteDatabase()
+{
+    using (var context = new ProductsContext())
+    {
+        bool deleted = await context.Database.EnsureDeletedAsync();
+        string deletionInfo = deleted ? "đã xóa" : "không xóa được";
+        Console.WriteLine($"{databasename} {deletionInfo}");
+    }
+}
+
++ Chèn dữ liệu vào các bảng, AddAsync, AddRangeAsync, SaveChangesAsync :
+public static async Task InsertProduct()
+{
+    using (var context = new ProductsContext())
+    {
+        // Thêm sản phẩm 1
+        await  context.products.AddAsync(new Product
+        {
+            Name = "Sản phẩm 1",
+            Provider = "Công ty 1"
+        });
+        // Thêm sản phẩm 2
+        await  context.AddAsync(new Product()
+        {
+            Name = "Sản phẩm 2",
+            Provider = "Công ty 1"
+        });
+
+        // Thực hiện cập nhật thay đổi trong DbContext lên Server
+        int rows = await context.SaveChangesAsync();
+        Console.WriteLine($"Đã lưu {rows} sản phẩm");
+
+    }
+}
+
+Nếu muốn thêm một lúc nhiều dữ liệu thì dùng AddRangeAsync, nó có thể nhận đối số là mảng các đối tượng cần chèn vào :
+var p1 = new  Product() {Name = "Sản phẩm 3", Provider = "CTY A"};
+var p2 = new  Product() {Name = "Sản phẩm 4", Provider = "CTY A"};
+var p3 = new  Product() {Name = "Sản phẩm 5", Provider = "CTY B"};
+
+await context.AddRangeAsync(new object[] {p1, p2, p3});
+
++ Đọc dữ liệu từ bảng, truy vấn với LINQ :
+Các đối tượng DbSet có phương thức ToListAsync() hay ToArrayAsync() để lấy về tất cả các dữ liệu (List) của bảng dùng LINQ trên các đối tượng này (nguồn là các DbSet)
+public static async Task ReadProducts()
+{
+    using (var context = new ProductsContext())
+    {
+        // context.SetLogging();
+        // Lấy danh sách các sản phẩm trong bảng 
+        var products = await context.products.ToListAsync();
+
+        Console.WriteLine("Tất cả sản phẩm");
+        foreach (var product in products)
+        {
+            Console.WriteLine($"{product.ProductId,2} {product.Name,  10} - {product.Provider}");
+        }
+        Console.WriteLine();
+        Console.WriteLine();
+
+        // Dùng LINQ để truy vấn đến DbSet products (bảng product)
+        // Lấy các sản phẩm cung cấp bởi CTY A 
+        products = await (from p in context.products
+                          where (p.Provider == "CTY A") select p
+                         )
+                        .ToListAsync();
+
+        // Nếu không dùng bất đồng bộ chỗ này, có thể dùng
+        // var pros = from p in context.products where (p.Provider == "CTY A") select p;
+
+        Console.WriteLine("Sản phẩm CTY A");
+        foreach (var product in products)
+        {
+            Console.WriteLine($"{product.ProductId,2} {product.Name,  10} - {product.Provider}");
+        }
+    }
+}
+
++ Cập nhật dữ liệu trong EF :
+// Đổi tên sản phẩm có ProductID thành  tên mới
+public static async Task RenameProduct(int id, string newName)
+{
+    using (var context = new ProductsContext())
+    {
+
+        // Lấy  Product có  ID sản phẩm  chỉ  ra
+        var product = await (from p in context.products where (p.ProductId == id) select p).FirstOrDefaultAsync();
+
+        // Đổi tên và cập nhật
+        if (product != null)
+        {
+            product.Name = newName;
+            Console.WriteLine($"{product.ProductId,2} có tên mới = {product.Name,  10}");
+            await context.SaveChangesAsync();  //Thi hành cập nhật
+        }
+    }
+}
+
++ Xóa dữ liệu trong EF :
+// Xóa sản phẩm có ProductID = id
+public static async Task DeleteProduct(int id)
+{
+    using (var context = new ProductsContext())
+    {
+        // context.SetLogging();
+        var product = await (from p in context.products where (p.ProductId == id) select p).FirstOrDefaultAsync();
+
+        if (product != null)
+        {
+            context.Remove(product);
+            Console.WriteLine($"Xóa {product.ProductId}");
+            await context.SaveChangesAsync();
+        }
+    }
+}
+
+2. Tạo Model trong Entity Framework ánh xạ các đối tượng vào Database C#
+- Tạo Model với Data Annotation (Attribute) :
+
+- Những khái niệm về tạo mối liên hệ trong EF Core
+Bảng dữ liệu phụ thuộc hay bảng con (Dependent entity) - là những bảng có chứa khóa ngoại (FK) tham chiếu đến bảng khác
+Bảng dữ liệu chính hay bảng cha (Principal entity) - là bảng có chứa khóa chính
+Khóa chính - PK là thuộc tính, chứa giá trị duy nhất để xác định dòng dữ liệu
+Khóa ngoại - Foreign Key (FK) - là thuộc tính trong bảng con thuộc được sử dụng để lưu khóa chính của bảng cha.
+
++ Ánh xạ cột với Attribute Column :
+[Column(TypeName="Money")]          // ánh xạ thuộc tính Price, kiểu decimal vào cột Price,  kiểu Money của bảng
+public decimal Price {set; get;}
+
+Một số kiểu hỗ trợ bởi SQL Server như :
+bigint          numeric         bit             smallint    decimal
+smallmoney      int             tinyint         money       date
+datetimeoffset  datetime2       smalldatetime   datetime
+time            char	        varchar         text
+nchar	        nvarchar        ntext           binary
+varbinary       image
+
++ Tạo ra sự liên hệ ForeignKey :
+Model/Product.cs :
+// Tự động sinh FK (CategoryID ~ Cateogry.CategoryID) ràng buộc đến PK key của Category
+public Category Category {set; get;}
+Nó tự động truy ngược về Cateogry để lấy tên khóa chính (Primary Key) của nó (CategoryID) Sau đó sẽ dùng tên này để đặt tên cho Fk (Foreign Key) trong bảng Product. 
+
+Ví dụ, Fk bạn muốn đặt tên là CateID thì khai báo như sau:
+/..
+// Khóa ngoại tự đặt CateID tham chiếu đến khóa chính CategoryID của bảng Category
+[ForeignKey("CateID")]
+public Category Category {set; get;}
+/..
+
+Tạo thuộc tính Fk truy cập được từ Model : 
+Mặc dù cách trên, bảng trong DB đã có cột Forgein Key, nhưng trong Model chưa có (nhưng có thuộc tính category là đối tượng Category), nên nếu cần lấy FK này thì chỉ cần thêm nó vào Model
+public class Product
+{
+    // ...
+    public int? CategoryId {set; get;}     // thêm thuộc tính (nullable)
+    public Category Category {set; get;}   // Thuộc tính tạo ra FK
+    // ...
+}
+Load các thuộc tính liên hệ với FK : 
+Ở Model Product mặc dù có thuộc tính Category: public Category Category {set; get;}
+Nhưng khi EF truy vấn để lấy một Product thì thuộc tính này không tự động được nạp từ DB (nó nhận null). Ví dụ, thêm vào ShopContext phương thức sau:
+
+Lazy load  : dotnet add package Microsoft.EntityFrameworkCore.Proxies
+Ở phương thức OnConfiguring của DbContext thêm vào : optionsBuilder.UseLazyLoadingProxies();
+Lúc này thuộc tính tham chiếu, collection đều cần phải khai báo virtual, thì nó sẽ tự động nạp, ở tại Product   
+public virtual Category Category {set; get;}
+Tại Model Category
+public virtual List<Product> products {set; get;}
+
++ Tạo điều hướng nghịch với thuộc tính InverseProperty : một sản phẩm có thể nằm trong hai Category
+Product.cs Thêm vào : 
+    public int? CategorySecondId;
+    [ForeignKey("CategorySecondId")]
+    [InverseProperty("products")]
+    public virtual Category SecondCategory {set; get;}
+
+Nó đã tạo ra bảng có 2 FK, một là CategoryId, một là CategorySecondId cùng tham chiếu đến bảng Category.
+
+3. Tạo quan hệ trong Entity Framework với Fluent API C# CSharp
+Fluent API cũng là phương pháp để tạo ra các bảng - bên cạnh phương pháp sử dụng Data Annotation 
+public class ShopContext : DbContext
+{
+    /..
+    // Phương thức này thi hành khi EnsureCreatedAsync chạy, tại đây gọi các Fluent API mong muốn 
+    override protected void OnModelCreating(ModelBuilder modelBuilder) {
+        base.OnModelCreating(modelBuilder);
+
+        // Các Fluent API
+
+    }
+    /..
+}
+https://xuanthulab.net/ef-core-tao-quan-he-trong-entity-framework-voi-fluent-api-c-csharp.html
+
+4. Thực hiện các câu truy vấn với Entity Framework C# CSharp
+- Truy vấn dữ liệu trực tiếp từ các DbSet :
+using (var context = new ShopContext ()) {
+    var products = context.products;
+    // var products = await context.products.ToListAsync (); nếu muốn dùng async
+    foreach (var pro in products) {
+        Console.WriteLine (pro.Name);
+    }
+}
+
+var products = context.products
+                .Where(p => p.Price > 100)              // Lọc các sản phẩm giá trên 100
+                .OrderByDescending(p => p.Price)        // Sắp xếp giảm dần, tăng dần là OrderBy
+                .Take(2);                               // Chỉ lấy 2 dòng đầu
+
+Để tìm một dòng dữ liệu theo PK Key, thì dùng FindAsync
+// Tìm sản phẩm có ID bằng 6
+var product = await context.products.FindAsync(6);
+if (product !=  null)
+    Console.WriteLine($"{product.Name}");
+
+Lấy phần tử đầu tiên thỏa mãn điều kiện
+using (var context = new ShopContext())
+{
+    // Sản phẩm đầu tiên scó giá trên 100, bắt đầu bằng chữ S
+    var product = await context.products.FirstOrDefaultAsync(p => (p.Price > 100 && p.Name.StartsWith("S")));
+    if (product !=  null)
+        Console.WriteLine($"{product.Name}");
+}
+
+Bạn có thể viết câu LINQ
+var products = await (from p in context.products select p).ToListAsync();
+foreach (var pro in products)
+{
+    Console.WriteLine(pro.Name);
+}
+
+Sử dụng inner join
+// Truy vấn lấy các sản phẩm (tên, giá) và tên danh mục của sản phẩm
+var products
+    = from p in context.products
+      join c in context.categories on p.CategoryId equals c.CategoryId
+      // where p.ProductId == 2
+      select new {
+          tensanpham = p.Name,
+          gia = p.Price,
+          danhmuc = c.Name
+      };
+foreach (var item in products)
+{
+   Console.WriteLine($"{item.tensanpham} giá {item.gia} danh mục {item.danhmuc}");
+}
+
+Nếu muốn lấy tất cả các sản phẩm, kể cả trường hợp danh mục thứ 2 của nó không tồn tại, thì dùng left join như sau:
+// Thi hành DefaultIfEmpty() trên tập kết quả right của Join để thực hiện left join
+ var products
+    = from p in context.products
+      join c in context.categories on p.CategorySecondId equals c.CategoryId into t
+      from cate2 in t.DefaultIfEmpty()
+      // where p.ProductId == 2
+      select new {
+          tensanpham = p.Name,
+          gia = p.Price,
+          danhmuc = (cate2 == null) ? "KHÔNG CÓ" : cate2.Name
+      };
+
+
+foreach (var item in products)
+{
+   Console.WriteLine($"{item.tensanpham} giá {item.gia} danh mục {item.danhmuc}");
+}
+
+5. Sinh ra các entity từ database với công cụ dotnet ef trong C# CSharp
+Các phần trước đã sử dụng EF theo hướng viết ra các Model, Entity từ đó sinh ra Database. 
+Tuy nhiên nếu muốn đi theo chiều ngược lại, từ Database có sẵn nó sinh ra các Entity, các lớp biểu biểu diễn mảng thì sử dụng đến công cụ dòng lệnh dotnet-ef
+
+Có sẵn trong vs howkteam
+Cài đặt : dotnet tool install --global dotnet-ef
+Lệnh kiểm tra : dotnet ef    
+
+dotnet add package System.Data.SqlClient
+dotnet add package Microsoft.EntityFrameworkCore
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.Extensions.DependencyInjection
+dotnet add package Microsoft.Extensions.Logging.Console
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.EntityFrameworkCore.Tools.DotNet
+
+var connectionString = ""Data Source=localhost,1433;Initial Catalog=shopdata;User ID=SA;Password=Password123";
+Lệnh truy vấn thông tin từ database và sinh ra các entity tương ứng :
+dotnet ef dbcontext scaffold -o Models -f -d "Data Source=localhost,1433;Initial Catalog=shopdata;User ID=SA;Password=Password123" "Microsoft.EntityFrameworkCore.SqlServer"
+
+-o Models thư mục lưu các entity được sinh ra
+-f cho phép ghi đè file
+-d ưu tiên sử dụng kỹ thuật Data Annotation nếu có thể - nếu không thể thì dùng FLuent API
+Cuối là chuỗi kết nối và thư viện sử dụng
+
+6. Tạo migration trong EntityFramework với C# CSharp
+Migration là kỹ thuật trong việc tương tác với cơ sở dữ liệu, việc thay đổi cấu trúc CSDL ở code sẽ được cập nhật lên CSDL đảm bảo dữ liệu đang tồn tại không bị mất, 
+lịch sử (phiên bản) cập nhật được lưu lại sau mỗi lần cập nhật.
+
+https://xuanthulab.net/ef-core-tao-migration-trong-entityframework-voi-c-csharp.html
+

@@ -1,0 +1,304 @@
+1. Giới thiệu ado.net và kết nối SQL Server với SqlConnection
+ADO.NET (ActiveX Data Object) là tập hợp các thư viện lớp qua đó cho phép ứng dụng tương tác (lấy về, cập nhật, xóa) với các nguồn dữ liệu (Như SQLServer, XML, MySQL, Oracle Database ...).
+
+Cấu trúc ADO chia làm 2 phần :
+- Data Provider :  là các thư viện lớp cung cấp chức năng tạo kết nối đến nguồn dữ liệu, thi hành các lệnh trên nguồn dữ liệu đó inset, update, delete, read.
+SQL Server: Loại Data Provider mặc định trong .NET Core là SqlClient ở namespace System.Data.SqlClient cung cấp khả năng kết nối đến SQL Server
+MySQL: Nếu muốn có loại Data Provider truy cập đến MySQL thì cài đặt package MySql.Data, sẽ có Data Provider MySql.Data.MySqlClient
+SQLite thì cài đặt Data Provider Microsoft.Data.SQLite
+
+- DataSet : là các thư viện lớp (độc lập với Data Provider) tạo ra các đối tượng để quản lý dữ liệu không phụ thuộc ngồn dữ liệu đến từ đâu, đã ở trong ứng dụng (local) hay từ nguồn XML.
+DataSet thường gồm nhiều DataTable, trong DataTable lại gồm DataColumn, các dàng buộc, các khóa chính ... Vậy DataSet là sự trừu tượng hóa một CSDL thực.
+
+- Cài CSDL MS SQL Server :
+dotnet add package System.Data.SqlClient
+
+using System.Data;
+using System.Data.SqlClient;
+
+- Kết nối với CSDL : SQL Server ở địa chỉ localhost (hoặc 127.0.0.1), cổng kết nổi 1433, tên tài khoản là SA, password là Password123
+string sqlconnectStr = "Data Source=localhost,1433;Initial Catalog=xtlab;User ID=SA;Password=Password123";
+DbConnection connection = new SqlConnection(sqlconnectStr);
+connection.Open();                      // Mở kết nối - hoặc  connection.OpenAsync(); nếu dùng async
+//..                                    // thực hiện cá tác  vụ truy vấn CSDL (CRUD - Insert, Select, Update, Delete)
+connection.Close();                     // Đóng kết nối
+
+- Tạo chuỗi kết nối với SQL Server :
+Nếu sử dụng using thì kết nối sẽ tự động đóng lại ở cuối khối using, nên không cần phải gọi Close
+String connectionString = "Server=192.168.1.10;Database=exampledb;User Id=testuser;Password=testpass;";
+using (var sqlConnection = new SqlConnection(connectionString))
+{
+    sqlConnection.Open();//Mở kết nối
+    //...Code truy vấn, cập nhật dữ dữ liệu ở đây
+}
+
+Chú ý, trong một phạm vi phương thức có thể sử dụng using mà không cần tạo khối lệnh :
+void myfunction()
+{
+    using var sqlConnection = new SqlConnection(connectionString);
+    sqlConnection.Open();//Mở kết nối
+    //...
+}
+
+- SqlConnectionStringBuilder : Không cần quan tâm
+
+- Thông tin kết nối SqlConnection :
+Open()	Mở kết nối, sử dụng OpenAsync() nếu dùng kỹ thuật async
+Close()	Đóng kết nối
+CreateCommand()	Tạo đối tượng SqlCommand để thực hiện các lệnh SQL
+StatisticsEnabled	Mặc định là false, nếu thiết lập bằng true thì nó cho phép thu thập thông tin về kết nối.
+RetrieveStatistics()	Lấy thông tin thống kê (trả về IDictionary)
+
+- Đọc thông tin kết nối từ file config :
+dotnet add package Microsoft.Extensions.Configuration
+dotnet add package Microsoft.Extensions.Options.ConfigurationExtensions
+dotnet add package Microsoft.Extensions.Configuration.Json
+
+- Sử dụng ADO.NET với MySQL Server :
+dotnet add package MySql.Data
+
+Thư viện này triển khai các Interface, Abstract ... của ADO.NET, ví dụ:
+DbConnectionStringBuilder triển khai thành MySqlConnectionStringBuilder
+DbConnection triển khai thành MySqlConnection
+DbCommand triển khai thành MySqlCommand
+
+Chú ý sử dụng namespace MySql.Data.MySqlClient
+
+2. SqlCommand truy vấn và cập nhật dữ liệu C# SQL Server
+Tạo đối tượng SqlCommand trong C# để truy vấn và cập nhật tới CSDL SQL Server, thực hiện lệnh với các phương thức ExecuteNonQuery, ExecuteScalar, ExecuteReader
+- Lớp SqlCommand - Khởi tạo đối tượng SqlCommand trên sql sever (MySqlCommand) :
+
+var sqlconnectstring = @"Data Source=localhost,1433;
+                        Initial Catalog=xtlab;
+                        User ID=SA;Password=Password123";
+var connection = new SqlConnection(sqlconnectstring);
+
+Ví dụ, khởi tạo SqlCommand - thiết lập ngay câu query và kết nối
+var cmd = new SqlCommand(queryString, connection);
+
+Hoặc khởi tạo SqlCommand sau đó mới thiết lập các thông số (câu truy vấn, kết nối và các tham số ...) rồi sau đó thực hiện SqlCommand (thực hiện truy vấn SQL)
+// Tạo đối tượng DbCommand
+using var command = new SqlCommand();
+command.Connection = connection;
+// select, insert, update, delete
+command.CommandText = "Mệnh đề truy vấn SQL";
+
+Hoặc Từ đối tượng SqlConnection cũng có thể tạo ngay đối tượng SqlCommand : 
+var command = connection.CreateCommand() ;
+command.CommandText   = queryString;
+
+- Thiết lập các tham số cho SqlCommmand :  ký hiệu là @tenthamso (nhớ có ký hiệu @ )
+string queryString =  "SELECT DanhmucID, TenDanhMuc, MoTa FROM Danhmuc where DanhmucID > @DanhmucID";
+command.Parameters.AddWithValue("@Danhmuc", 5);
+Thì truy vấn là "SELECT DanhmucID, TenDanhMuc, MoTa FROM Danhmuc where DanhmucID > 5"
+
+var danhmuc = new SqlParameter("@DanhmucID", 5); // Tạo tham số
+command.Parameters.Add(danhmuc);                 // Thêm vào SqlCommand
+
+- Các cách thi hành SqlCommand và lấy kết quả truy vấn :
+ExecuteNonQuery() thi hành truy vấn - không cần trả về dữ liệu gì, phù hợp thực hiện các truy vấn như Update, Delete ...
+ExecuteReader() thi hành lệnh - trả về đối tượng giao diện IDataReader như SqlDataReader, từ đó đọc được dữ liệu trả về
+ExecuteScalar() thì hành và trả về một giá trị duy nhất - ở hàng đầu tiên, cột đầu tiên
+
++ ExecuteScalar() :  Thực tế trả về tập kết quả nhiều dòng nhiều cột
+// Tạo đối tượng DbCommand
+using var command = new SqlCommand();
+command.Connection = connection;
+
+// Câu truy vấn gồm: chèn dữ liệu vào và lấy định danh(Primary key) mới chèn vào
+string queryString = @"INSERT INTO Shippers (Hoten, Sodienthoai) VALUES (@Hoten, @Sodienthoai);
+                       SELECT CAST(scope_identity() AS int)";
+
+command.CommandText = queryString;
+command.Parameters.AddWithValue("@Hoten", "Abc");
+command.Parameters.AddWithValue("@Sodienthoai", 123456);
+
+var ShipperID = command.ExecuteScalar(); // Thi hành SQL trả về giá trị đầu tiên
+Console.WriteLine($"Thêm mới Shipper, ID = {ShipperID}");
+
++ ExecuteNonQuery() :
+Thi hành SqlCommand bằng phương thức ExecuteNonQuery nó chỉ trả về kết quả là số dòng dữ liệu bị ảnh hưởng (số dòng xóa, số dòng update ...). 
+Thường dùng cách này để thi hành các truy vấn UPDATE, INSERT, DELETE. Tuy nhiên, nếu là gọi Procedure thì có kết quả trả về.
+// Câu truy vấn gồm: chèn dữ liệu vào và lấy định danh(Primary key) mới chèn vào
+string queryString = @"DELETE Shippers WHERE ShipperID = @ShipperID";
+
+command.CommandText = queryString;
+command.Parameters.AddWithValue("@ShipperID", 4);
+
+var rows_affected = command.ExecuteNonQuery();
+Console.WriteLine($"Số dòng ảnh hưởng = {rows_affected}");
+
++ ExecuteReader() :
+Trả về SqlDataReader : Một số phương thức trong SqlDataReader :
+SqlDataReader.HasRows() cho biết có dòng dữ liệu nào không
+SqlDataReader.Read() nạp dữ liệu dòng tiếp theo, nếu trả về true là có dòng dữ liệu nạp về thành công, nếu false là đã hết dữ liệu nạp về. Sau khi gọi phương thực này, thì các cột của dòng có thể đọc bằng các toán tử [cột], hoặc các hàm đọc dữ liệu như .GetInt32(cột), .GetString(cột) ...
+SqlDataReader.Close() đóng Reader sau khi đọc xong dữ liệu
+if (reader.HasRows)
+{
+    // Đọc từng dòng tập kết quả
+     while (reader.Read())
+     {
+         var danhmuc = reader.GetInt32(0);
+         var tendanhmuc = reader["TenDanhMuc"];
+         var mota = reader.GetString("Mota");
+
+         Console.WriteLine($"{danhmuc, 4} - {tendanhmuc, -20} - {mota}");
+     }
+}
+else
+{
+    Console.WriteLine("Không có dữ liệu trả về");
+}
+
+Ngoài ra khi có được đối tượng SqlDataReader, có thể lấy toàn bộ kết quả trả về của SqlCommand đưa vào DataTable
+//...
+SqlCommand command = new SqlCommand("SELECT DanhmucID, TenDanhMuc FROM Danhmuc;", connection);
+using (SqlDataReader reader = command.ExecuteReader())
+{
+    DataTable myTable = new DataTable();
+
+    if (reader.HasRows)
+    {
+        myTable.Load(reader);
+    }
+    else
+    {
+        //No rows
+    }
+}
+//...
+
++ ExecuteXmlReader() tạo ra đối tượng System.Xml.XmlReader, từ đối tượng đó giúp đọc từng dòng kết quả trả về theo cấu trúc XML.
+
+- Gọi Procedure của DB :
+Mặc định SqlCommand sẽ coi nội dung trong thuộc tính CommandText là câu lệnh SQL Nếu muốn gọi đến Procedure thì thiết lập nó bằng CommandType.StoredProcedure.
+SQL :
+CREATE PROCEDURE [dbo].[getproduct](@id int)
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT TenSanpham, Gia FROM Sanpham Where SanphamID = @id
+END
+
+// Thi hành thủ tục PROCEDURE [dbo].[getproduct](@id int) trong MS SQL Server
+SqlCommand cmd   = new SqlCommand("getproduct", connection);
+cmd.CommandType  = CommandType.StoredProcedure;
+// Tham số của procedure
+cmd.Parameters.Add(
+    new SqlParameter() {
+        ParameterName   = "@id",
+        SqlDbType       = SqlDbType.Int,
+        Value           = 10
+    }
+);
+
+// Đọc kết quả trả về
+using (SqlDataReader reader = cmd.ExecuteReader())
+{
+    while (reader.Read())
+    {
+        var ten = reader["TenSanpham"];
+        var gia = reader["Gia"];
+
+        Console.WriteLine($"{ten} \t {gia}");
+    }
+}
+
+Phương thức bất đồng bộ tương ứng như ExecuteNonQueryAsync(), ExecuteReaderAsync() ... để thích thì áp dụng kỹ thuật async, kể các SqlDataReader với ReadAsync()
+
+3. DataAdapter DataSet và DataTable tìm hiểu và sử dụng
+Tìm hiểu cấu trúc lớp biểu diễn cấu trúc cơ sở dữ liệu, dữ liệu bảng với DataTable và DataSet, khai báo SqlDataAdapter là cầu nối để tương tác với nguồn dữ liệu, ánh xạ dữ liệu trong bộ nhớ và CSDL thực tế
+
+- DataSet :
+DataSet là một cấu trúc phức tạp, thành phần cơ bản của ADO.NET.
+DataSet dataSet = new DataSet();
+
+- DataTable :
+DataTable là đối tượng chứa dữ liệu, nó có tên, các dòng, cột qua đó nó là ánh xạ của một bảng (Table) của CSDL.
+// Khởi tạo bảng với tên MyTable
+DataTable table = new DataTable("MyTable");
+
+// Thêm các cột vào bảng
+table.Columns.Add("STT");
+table.Columns.Add("HoTen");
+table.Columns.Add("Tuoi");
+
+// Thêm dòng liệu vào cột
+table.Rows.Add(1, "XuanThuLab", 25);      // Dòng thứ nhất
+table.Rows.Add(2, "Nguyen Van A", 23);    // Dòng thứ hai
+table.Rows.Add(3, "Nguyen Van B", 20);    // Dòng thứ ba
+// Duyệt qua các cột, in tên cột
+Console.WriteLine($"Bảng {table.TableName}");
+foreach (DataColumn c in  table.Columns)
+{
+    Console.Write($"{c.ColumnName, 20}");
+}
+Console.WriteLine();
+
+// Duyệt qua các dòng và in  dữ liệu cột
+for (int i = 0; i < table.Rows.Count; i++)
+{
+    Console.Write($"{table.Rows[i][0], 20}");             // Cột 0, hàng i
+    Console.Write($"{table.Rows[i]["HoTen"], 20}");       // Cột HoTen, hàng i
+    Console.Write($"{table.Rows[i]["Tuoi"], 20}");        // Cột 2, hàng i
+    Console.WriteLine();
+}
+
+// Gán giá trị dữ liệu vào trường (cell)
+table.Rows[2]["HoTen"] = "Họ tên mới";
+
+// Hoặc duyệt bằng foreach liệt kê các dòng
+Console.WriteLine();
+foreach (DataRow r in table.Rows)
+{
+    Console.Write($"{r[0], 20}");
+    Console.Write($"{r["HoTen"], 20}");
+    Console.Write($"{r["Tuoi"], 20}");
+    Console.WriteLine();
+}
+
+// Bảng MyTable
+//                  STT               HoTen                Tuoi
+//                    1          XuanThuLab                  25
+//                    2        Nguyen Van A                  23
+//                    3        Nguyen Van B                  20
+
+//                    1          XuanThuLab                  25
+//                    2        Nguyen Van A                  23
+//                    3          Họ tên mới                  20
+
+static void ShowDataTable(DataTable table)
+{
+    Console.WriteLine("Bảng: " + table.TableName);
+    // Hiện thị các cột
+    foreach (DataColumn column in table.Columns)
+    {
+        Console.Write($"{column.ColumnName, 15}");
+    }
+    Console.WriteLine();
+
+    // Hiện thị các dòng dữ liệu
+    int number_cols = table.Columns.Count;
+    foreach (DataRow row in table.Rows) {
+        for (int i = 0; i < number_cols; i++)
+        {
+            Console.Write($"{row[i], 15}");
+        }
+        Console.WriteLine();
+    }
+
+}
+
+DataTable có thể đưa vào trong DataSet, ví dụ
+dataSet.Tables.Add(table);
+
+- DataAdapter
+DataAdapter là lớp tạo ra cầu nối giữa DataSet (các bảng) với nguồn dữ liệu (Database - Tabble) -
+từ đó có thể lấy dữ liệu nguồn về DataSet, dữ liệu được biên tập (insert, update, delete) trong DataSet - sau đó cập nhật trở lại nguồn.
+
+Một đối tượng DataAdapter có các thuộc tính quan trọng để tạo ra các thao tác tương tác với Database như:
+SelectCommand thuộc tính chứa đối tượng SqlCommand, nó chạy khi lấy dữ liệu bằng cách gọi phương thực Fill
+InsertCommand thuộc tính chứa đối tượng SqlCommand, chạy khi thực hiện thêm dữ liệu
+UpdateCommand thuộc tính chứa đối tượng SqlCommand, chạy khi thực hiện cập nhật
+DeleteCommand thuộc tính chứa đối tượng SqlCommand, chạy khi thực hiện xóa dòng dữ liệu
+
