@@ -1,0 +1,46 @@
+ASP.NET Core là một Framework nguồn mở, đa nền tảng xây dựng trên .NET Core dành cho việc xây dựng các ứng dụng dựa trên kết nối internet, cụ thể sử dụng ASP.NET Core có thể:
+Xây dựng các ứng dụng dịch vụ web, IoT, backend cho ứng dụng di động (API).
+Ứng dụng có thể chạy trên .NET Core hay .NET Framework
+Có thể sử dụng các cộng cụ để làm việc với ASP.NET trên Linux, Windows, macOS
+Có thể host ứng dụng trên Kestrel, IIS, Nginx, Apache, Docker thậm chí tự host (tự chạy dịch vụ HTTP)
+
+Sau khi thành thạo ASP.NET Core thì có thể sử dụng đến ASP.NET Core MVC để hỗ trợ kiến trúc MVC (Model-View-Controller), để phát triển ứng dụng module hóa cao hơn và được hỗ trợ các công nghệ như Razor
+
+1. 
+Tạo thư mục dự án (dotnet new để biết thêm chi tiết)
+- Vào trong dự án : dotnet new web ( dotnet new web --framework net5.0 )
+- ctrl shirft p : net build
+- 2 file sinh ra tại: .vscode/launch.json và .vscode/tasks.json
+- Tạo thư mục : wwwroot để chứa các file css, js, ảnh ... File Properties/lauchSettings.json chứa các thiết lập...
+- Giờ để build ứng dụng gõ lệnh: dotnet build
+- Để build và chạy ứng dụng luôn gõ : dotnet run
+- kết thúc nhấn Ctrl + C
+Ứng dụng đang chạy trên local host
+Nếu muốn thiết lập chạy trên cổng khác mở file Properties/lauchSettings.json ra đổi cổng muốn sử dụng.
+Ngoài ra để tự động build và chạy lại khi mã cập nhật sử dụng lệnh: dotnet watch run
+Phát hành web dùng : dotnet publish
+
+- Thêm :
+Kích hoạt SSL (truy cập với https) ở môi trường phát triển :
+dotnet dev-certs https --clean
+dotnet dev-certs https --trust
+
+Cài thư viện :
+npm init
+npm install bootstrap
+npm install jquery
+npm i popper.js
+
+Sử dụng BuildBundlerMinifier công cụ đóng gọi và tối ưu kích thước cho JS, CSS, HTML :(bỏ đi)
+Các thư viện trên chứa trong node_modules, để sử dụng ta cần copy các file js,css vào thư mục trong wwwroot, 
+để làm điều đó một cách tự động thì dùng đến BuildBundlerMinifier :
+dotnet add package BuildBundlerMinifier
+
+2. Tạo middleware và đăng ký vào pipeline của ứng dụng Web C# CSharp
+Một Middleware là một module code nó nhận yêu cầu gửi đến Request và trả về Response. 
+Nhận một HTTP Request gửi đến và phát sinh ra HTTP Response để trả về
+Nhận một HTTP Request gửi đến, thi hành một số tác vụ (có thể là sửa đổi HTTP Request), sau đó chuyển đến một middleware khác.
+Nhận HTTP Response, sửa nó và chuyển đến một Middleware khác
+
+Chuỗi các middleware theo thứ tự như vậy gọi là pipeline.
+Các middleware như là các dịch vụ nhỏ, đăng ký vào ứng dụng bằng cách sử dụng đối tượng IApplicationBuilder, sau đó ứng dụng căn sẽ xây dựng lên các pipeline (luồng xử lý) cho các truy vấn gửi đến.

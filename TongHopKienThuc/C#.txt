@@ -792,7 +792,7 @@ Vì việc thực thi interface rất giống với kế thừa nên ta hoàn to
 ISpeak animal = new Animal();
 
 
-        hóa học lập trình C# nâng cao
+        Khóa học lập trình C# nâng cao
 
 25. Tổng quan về Collection trong C#
 Các lớp hỗ trợ lưu trữ, quản lý và thao tác với các đối tượng một cách có thứ tự.
